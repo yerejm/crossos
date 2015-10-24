@@ -1,0 +1,38 @@
+---
+- name: Wait for SSH
+  local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH
+
+##
+## PKG
+##
+- name: Install base packages
+  pkgng:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - sudo
+    - vim
+    - git
+    - ntp
+
+##
+## NTP
+##
+- name: Configure ntp
+  template:
+    src: ntp.conf.FreeBSD.j2
+    dest: /etc/ntp.conf
+  notify: restart ntpd
+
+##
+## SECURITY
+##
+# # This task can be used for OSX only if notification works.
+# - name: Update sshd config to disallow root logins
+#   lineinfile:
+#     dest: /etc/ssh/sshd_config
+#     regexp: ^PermitRootLogin
+#     line: "PermitRootLogin no"
+#     state: present
+#   notify: restart ssh
+

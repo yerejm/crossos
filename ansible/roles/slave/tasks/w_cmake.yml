@@ -1,0 +1,18 @@
+---
+- include: windows_cache_download.yml
+
+- name: cmake | Installed?
+  win_stat:
+    path: "C:\\Program Files (x86)\\CMake"
+  register: app
+
+- name: cmake | Install
+  raw: "{{ download_location }}\\{{ file }} /S"
+  when: not app.stat.exists
+
+- name: cmake | Add to path
+  raw: powershell [System.Environment]::SetEnvironmentVariable('Path',$Env:Path+';C:\Program Files (x86)\CMake\bin','Machine')
+  when: not app.stat.exists
+
+- include: windows_clean.yml
+

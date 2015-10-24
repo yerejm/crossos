@@ -1,0 +1,29 @@
+---
+#-----------------------------------------------------------------------
+# Build Master variables
+#-----------------------------------------------------------------------
+
+# The buildmaster users and their passwords.
+# These are the login details for the build master web interface.
+buildmaster_users_passwords:
+  buildbot: buildbot
+
+# The buildslave users and their passwords to be authenticated by the master.
+# These are the login details the build slaves use when connecting to the build
+# master.
+# These users are hardcoded into the build master configuration.
+# The passwords can change.
+buildslaves_passwords:
+  windows: windows
+  debian: debian
+
+# Buildbot user name under which the build master is created.
+buildbot_username: buildbot
+
+# Details for the build master web front end.
+buildmaster_web_host: localhost
+buildmaster_web_port: 9989
+# The build master will fetch builds from the build slaves and place them in the
+# specified builds location.
+buildmaster_builds_location: /srv/http/dl
+

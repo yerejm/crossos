@@ -1,0 +1,103 @@
+# Ansible user creation on OSX seems broken, so a dedicated buildbot user will
+# not be available. Assume the presence of an already created user that is
+# set by host_vars to act as the buildbot user (e.g. vagrant).
+---
+##
+## USER
+##
+- name: Add github to known_hosts
+  lineinfile:
+    dest: ~/.ssh/known_hosts
+    create: yes
+    state: present
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+    regexp: "^github\\.com"
+
+##
+## HOMEBREW
+##
+- name: Check homebrew installation
+  stat:
+    path: /usr/local/bin/brew
+  register: brew_exec
+
+- name: Clone homebrew
+  git:
+    repo: https://github.com/Homebrew/install.git
+    dest: homebrew
+    accept_hostkey: "{{ 'yes' if testing is defined else 'no' }}"
+    force: yes
+  when: not brew_exec.stat.exists
+
+- name: Install homebrew
+  shell: "echo \"\\n\" | ruby homebrew/install"
+  when: not brew_exec.stat.exists
+
+- name: Update brew cache and upgrade
+  homebrew:
+    update_homebrew: yes
+    upgrade_all: yes
+
+- name: Install cmake
+  homebrew:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - cmake
+
+# Put cmake in the PATH as privileged user
+# On darwin, the path setting of non-interactive logins does not include
+# /usr/local/bin, so cmake is not available.
+# This means that doing a real login as a user to echo the $PATH and doing the
+# same through ssh results in competely different PATH values being set.
+# There does not seem to be a it-just-works solution to handle it properly, so
+# link the executable directly into /usr/bin.
+- name: Link cmake
+  file:
+    src: /usr/local/bin/cmake
+    dest: /usr/bin/cmake
+    state: link
+  sudo: yes
+
+##
+## PIP
+##
+# sudo to install because on osx this playbook is not run as root
+- name: Install pip
+  sudo: yes
+  easy_install:
+    name: pip
+
+- name: Install buildbot slave
+  sudo: yes
+  pip:
+    executable: /usr/local/bin/pip
+    name: buildbot-slave
+
+##
+## BUILDBOT
+##
+- name: Install buildslave launch agent
+  sudo: yes
+  template:
+    src: net.buildbot.slave.plist.j2
+    dest: /Library/LaunchAgents/net.buildbot.slave.plist
+
+- name: Create build slave
+  shell: "/usr/local/bin/buildslave create-slave . {{ buildmaster_host }}:{{ buildmaster_port }} {{ slave_username }} {{ slave_password }}"
+  args:
+    creates: buildbot.tac
+  notify: restart darwin buildbot
+
+- name: Update slave host information
+  template:
+    src: buildbot_info_host.j2
+    dest: info/host
+  notify: restart darwin buildbot
+
+- name: Update slave admin information
+  template:
+    src: buildbot_info_admin.j2
+    dest: info/admin
+  notify: restart darwin buildbot
+

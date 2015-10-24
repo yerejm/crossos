@@ -1,0 +1,20 @@
+---
+- include: windows_cache_download.yml
+
+- name: 7zip | Installed?
+  win_stat:
+    path: "C:\\Program Files\\7-Zip"
+  register: app
+
+- name: 7zip | Install
+  win_msi:
+    path: "{{ download_location }}\\{{ file }}"
+    state: present
+  when: not app.stat.exists
+
+- name: 7zip | Add to path
+  raw: powershell [System.Environment]::SetEnvironmentVariable('Path',$Env:Path+';C:\Program Files\7-Zip','Machine')
+  when: not app.stat.exists
+
+- include: windows_clean.yml
+

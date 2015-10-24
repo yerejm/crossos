@@ -1,0 +1,9 @@
+---
+- hosts: all_hosts
+  user: root
+  roles:
+    - common
+    - slave
+  vars_files:
+    - vars/secrets.yml
+
