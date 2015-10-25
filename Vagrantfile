@@ -3,12 +3,12 @@
 SERVERS = {
   :debian => {
     :ip => '172.31.70.41',
-    :provisioner => [:linux, :ram2g],
+    :provisioner => [:linux, :ram2g, :headless],
     :box => 'debian82-desktop',
   },
   :windows => {
     :ip => '172.31.70.43',
-    :provisioner => [:windows, :ram2g],
+    :provisioner => [:windows, :ram2g, :headless],
     :box => 'eval-win81x64-enterprise',
   }
 }
@@ -39,6 +39,12 @@ def windows(cfg)
   # The default vagrant share is necessary while ansible's windows support for
   # copy and template is lacking.
   cfg.cache.scope = :machine if Vagrant.has_plugin? "vagrant-cachier"
+end
+
+def headless(cfg)
+  cfg.vm.provider "virtualbox" do |v|
+    v.gui = false
+  end
 end
 
 Vagrant.configure("2") do |config|
