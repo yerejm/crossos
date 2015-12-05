@@ -28,7 +28,7 @@ git_file: Git-2.5.3-64-bit.exe
 # vs_file: vs2013.4_ce_enu.iso
 # vs_version: 12.0
 vs_url: https://go.microsoft.com/fwlink/?LinkId=615448
-vs_file: vs2015.com_enu.iso
+vs_file: vs2015.1.com_enu.iso
 vs_version: 14.0
 
 #
