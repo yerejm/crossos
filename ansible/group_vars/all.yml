@@ -3,3 +3,5 @@
 buildmaster_host: 172.30.70.40
 buildmaster_port: 9989
 
+ttt_repository: https://github.com/yerejm/ttt
+

@@ -1,0 +1,10 @@
+---
+- include: windows_cache_download.yml
+
+- name: vcforpython27 | Install
+  win_msi:
+    path: "{{ download_location }}\\{{ file }}"
+    state: present
+
+- include: windows_clean.yml
+

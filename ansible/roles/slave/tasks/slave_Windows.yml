@@ -19,7 +19,8 @@
   vars:
     file: "{{ vs_file }}"
     base_url: "{{ vs_url }}"
-    tags: visualstudio
+    tags:
+      - visualstudio
 
 # dependency: compiler
 - include: w_cmake.yml
@@ -34,9 +35,10 @@
   vars:
     file: "{{ git_file }}"
     base_url: "{{ git_url }}"
-    tags: git
+    tags:
+      - git
 
-  # dependency: buildbot
+# dependency: buildbot
 - include: w_python.yml
   vars:
     file: "{{ python_file }}"
@@ -59,7 +61,16 @@
   vars:
     file: "{{ wdk_file }}"
     base_url: "{{ wdk_url }}"
-    tags: wdk
+    tags:
+      - wdk
+
+# dependency: compiling extensions on python 2.7
+- include: w_vcp27.yml
+  vars:
+    file: "{{ vcp27_file }}"
+    base_url: "{{ vcp27_url }}"
+    tags:
+      - python
 
 ##
 ## PIP DEPENDENCIES

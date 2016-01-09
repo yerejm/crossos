@@ -1,0 +1,7 @@
+---
+###
+### ttt
+###
+
+- name: develop | windows | Install ttt
+  raw: "pip install git+{{ ttt_repository }}"

@@ -1,0 +1,10 @@
+---
+###
+### ttt
+###
+
+- name: develop |  debian | Install ttt
+  pip:
+    name: 'git+{{ ttt_repository }}#egg=ttt'
+    state: present
+# should set editable:false when ansible 2 arrives

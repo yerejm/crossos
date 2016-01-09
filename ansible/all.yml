@@ -4,6 +4,7 @@
   roles:
     - common
     - slave
+    - developer
   vars_files:
     - vars/secrets.yml
 

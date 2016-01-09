@@ -37,6 +37,7 @@
     - g++
     - make
     - python
+    - python-dev
     - python-pip
     - gdb
     - libxrandr-dev
