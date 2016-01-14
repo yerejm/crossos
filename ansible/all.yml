@@ -1,5 +1,6 @@
 ---
 - hosts: all_hosts
+  strategy: free
   user: root
   roles:
     - common

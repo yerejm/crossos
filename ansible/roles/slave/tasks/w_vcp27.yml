@@ -1,10 +1,17 @@
 ---
-- include: windows_cache_download.yml
+- name: Download file
+  win_get_url:
+    url: "file://{{ cache_location }}\\{{ file }}"
+    dest: "{{ download_location }}\\{{ file }}"
+    force: no
 
 - name: vcforpython27 | Install
   win_msi:
     path: "{{ download_location }}\\{{ file }}"
     state: present
 
-- include: windows_clean.yml
+- name: vcforpython27 | Delete local file
+  win_file:
+    path: "{{ download_location }}\\{{ file }}"
+    state: absent
 

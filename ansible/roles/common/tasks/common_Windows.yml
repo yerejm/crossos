@@ -2,24 +2,42 @@
 - name: Wait for WinRM
   local_action: wait_for port="{{ ansible_ssh_port }}" host="{{ inventory_hostname }}"
 
-##
-## Remove telemetry
-##
-- name: Install removal utility
-  raw: "copy c:\\vagrant\\ansible\\roles\\common\\files\\BlockWindows.bat c:\\tmp"
+- name: Checking common setup
+  win_stat:
+    path: .common
+  register: common
 
-- name: Install blocking utility
-  raw: "copy c:\\vagrant\\ansible\\roles\\common\\files\\HideWindowsUpdates.vbs c:\\tmp"
+- name: Install removal utilitiies
+  win_copy:
+    src: "files/{{ item }}"
+    dest: "c:/tmp/{{ item }}"
+  with_items:
+    - BlockWindows.bat
+    - HideWindowsUpdates.vbs
+    - uninstall_apps.ps1
+  when: not common.stat.exists
 
-- name: Execute removal
+- name: Execute telemetry removal
   raw: "c:\\tmp\\BlockWindows.bat"
-
-##
-## Remove applications
-##
-- name: Install uninstallation utility
-  raw: "copy c:\\vagrant\\ansible\\roles\\common\\files\\uninstall_apps.ps1 c:\\tmp"
+  when: not common.stat.exists
 
 - name: Uninstall Windows Modern Apps
   raw: "powershell c:\\tmp\\uninstall_apps.ps1"
+  when: not common.stat.exists
+
+- name: Remove removal utilities
+  win_file:
+    path: "c:/tmp/{{ item }}"
+    state: absent
+  with_items:
+    - BlockWindows.bat
+    - HideWindowsUpdates.vbs
+    - uninstall_apps.ps1
+  when: not common.stat.exists
+
+- name: Removal complete
+  win_file:
+    name: .common
+    state: touch
+  when: not common.stat.exists
 

@@ -1,3 +1,0 @@
----
-- name: Delete local file
-  raw: "del /f /q/ s {{ download_location }}\\{{ file }}"

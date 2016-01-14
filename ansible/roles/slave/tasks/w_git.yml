@@ -1,18 +1,26 @@
 ---
-- include: windows_cache_download.yml
-
 - name: git | Installed?
   win_stat:
     path: "C:\\Program Files\\Git"
   register: app
 
+- name: Download file
+  win_get_url:
+    url: "file://{{ cache_location }}\\{{ file }}"
+    dest: "{{ download_location }}\\{{ file }}"
+    force: no
+  when: not app.stat.exists
+
 - name: git | Install
   raw: "{{ download_location }}\\{{ file }} /SILENT"
   when: not app.stat.exists
 
-- name: git | Add to path
-  raw: powershell [System.Environment]::SetEnvironmentVariable('Path',$Env:Path+';C:\Program Files\Git\bin','Machine')
-  when: not app.stat.exists
+- name: git | Delete local file
+  win_file:
+    path: "{{ download_location }}\\{{ file }}"
+    state: absent
 
-- include: windows_clean.yml
-
+- include: win_path.yml
+  vars:
+    path: 'C:\Program Files\Git\bin'
+    level: machine
