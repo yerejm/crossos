@@ -15,11 +15,13 @@
   win_msi:
     path: "{{ download_location }}\\{{ file }}"
     state: present
+  when: not app.stat.exists
 
 - name: 7zip | Delete local file
   win_file:
     path: "{{ download_location }}\\{{ file }}"
     state: absent
+  when: not app.stat.exists
 
 - include: win_path.yml
   vars:

@@ -6,50 +6,48 @@
 - include: w_git.yml
   vars:
     file: "{{ git_file }}"
-    base_url: "{{ git_url }}"
   tags: git
 
 # dependency: compiler
 - include: w_visualstudio.yml
   vars:
     file: "{{ vs_file }}"
-    base_url: "{{ vs_url }}"
   tags: visualstudio
 
 # dependency: compiling extensions on python 2.7
 - include: w_vcp27.yml
   vars:
     file: "{{ vcp27_file }}"
-    base_url: "{{ vcp27_url }}"
   tags: [python]
 
 # dependency: buildbot
 - include: w_python.yml
   vars:
     file: "{{ python_file }}"
-    base_url: "{{ python_url }}"
   tags: [python,buildbot]
 
 # dependency: buildbot
 - include: w_pywin32.yml
   vars:
     file: "{{ pywin32_file }}"
-    base_url: "{{ pywin32_url }}"
   tags: [pywin32,buildbot]
 
 # dependency: symstore
 - include: w_wdk.yml
   vars:
     file: "{{ wdk_file }}"
-    base_url: "{{ wdk_url }}"
   tags: wdk
 
 # dependency: compiler
 - include: w_cmake.yml
   vars:
     file: "{{ cmake_file }}"
-    base_url: "{{ cmake_url }}"
   tags: visualstudio
+
+- include: w_7zip.yml
+  vars:
+    file: "{{ zip_file }}"
+  tags: 7zip
 
 ##
 ## PIP DEPENDENCIES
@@ -70,16 +68,20 @@
     state: present
   tags: buildbot
 
+- name: Set buildbot path
+  set_fact:
+    buildbot_path: "c:\\{{ buildbot_username }}"
+
 - name: Create buildbot area
   win_file:
-    path: "c:/{{ buildbot_username }}/"
+    path: "{{ buildbot_path }}\\"
     state: directory
   tags: buildbot
 
 - name: Install buildbot symbol store utility
   win_copy:
     src: files/storesymbols.bat
-    dest: c:/buildbot/storesymbols.bat
+    dest: "{{ buildbot_path}}/storesymbols.bat"
   tags: buildbot
 
 ##
@@ -111,7 +113,7 @@
 # BUILDBOT
 #
 - name: Create build slave
-  raw: "buildslave create-slave c:\\{{ buildbot_username }} {{ buildmaster_host }}:{{ buildmaster_port }} {{ slave_username }} {{ slave_password }}"
+  raw: "buildslave create-slave {{ buildbot_path }} {{ buildmaster_host }}:{{ buildmaster_port }} {{ slave_username }} {{ slave_password }}"
   tags: buildbot
 
 # Adding the service does not grant the logon privilege. This must be done
@@ -134,7 +136,7 @@
 - name: Set buildbot service registry
   win_regedit:
     key: HKLM:\SYSTEM\CurrentControlSet\services\Buildbot\Parameters
-    data: "C:\\{{ buildbot_username }}"
+    data: "{{ buildbot_path }}"
     value: directories
     datatype: string
   tags: buildbot

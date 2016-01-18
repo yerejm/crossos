@@ -14,51 +14,28 @@ download_location: 'c:\tmp'
 # The Windows hosts file
 etc_hosts_file: 'c:\windows\system32\drivers\etc\hosts'
 
-#
-# Where to get the git binaries for windows
-#
-git_url: https://github.com/git-for-windows/git/releases/download/v2.5.3.windows.1
-git_file: Git-2.5.3-64-bit.exe
+# Git for windows
+git_file: Git-2.7.0-64-bit.exe
 
-#
-# Where to get the visual studio iso
-#
-# To choose a different compiler, override in hosts/vars
-# vs_url: http://go.microsoft.com/?linkid=9863609
-# vs_file: vs2013.4_ce_enu.iso
-# vs_version: 12.0
-vs_url: https://go.microsoft.com/fwlink/?LinkId=615448
+# Visual Studio ISO
 vs_file: vs2015.1.com_enu.iso
 vs_version: 14.0
 
-#
-# Where to get the python binaries for windows
-# This must be Python 2.7 due to buildbot.
-#
-python_url: https://www.python.org/ftp/python/2.7.10
-python_file: python-2.7.10.amd64.msi
+# 7zip for windows
+zip_file: 7z1514-x64.msi
 
-#
-# Where to get the python win32 extensions. Required by buildbot.
-#
-pywin32_url: http://liquidtelecom.dl.sourceforge.net/project/pywin32/pywin32/Build%20219
+# Python for windows. This must be version 2 due to buildbot.
+python_file: python-2.7.11.amd64.msi
+
+# python win32 extensions.
 pywin32_file: pywin32-219.win-amd64-py2.7.exe
 
-#
-# Where to get the Windows Development Kit (net) installer.
-#
-wdk_url: http://download.microsoft.com/download/0/8/C/08C7497F-8551-4054-97DE-60C0E510D97A/wdk
+# Windows Development Kit
 wdk_file: wdksetup.exe
 
-#
-# Where to get the cmake installer.
-#
-cmake_url: https://cmake.org/files/v3.3
-cmake_file: cmake-3.3.2-win32-x86.exe
+# cmake
+cmake_file: cmake-3.4.1-win32-x86.exe
 
-#
-# Where to get VC for Python 2.7 (for pip installs requiring compilation)
-# Must be Python 2.7 for buildbot.
-#
-vcp27_url: https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B
+# visual c++ for python 2.7
 vcp27_file: VCForPython27.msi
+
