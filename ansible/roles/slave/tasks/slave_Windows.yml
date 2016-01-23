@@ -42,7 +42,7 @@
 - include: w_cmake.yml
   vars:
     file: "{{ cmake_file }}"
-  tags: visualstudio
+  tags: cmake
 
 - include: w_7zip.yml
   vars:
