@@ -2,11 +2,48 @@
 ##
 ## BUILD DEPS
 ##
+- name: Download install files
+  win_get_url:
+    url: "file://{{ cache_location }}\\{{ item }}"
+    dest: "{{ download_location }}\\{{ item }}"
+  with_items:
+    - "{{ python_file }}"
+    - "{{ pywin32_file }}"
+    - "{{ git_file }}"
+    - "{{ cmake_file }}"
+    - "{{ zip_file }}"
+    - "{{ vs_file }}"
+    - "{{ vcp27_file }}"
+    - WDK.zip
+
+# dependency: buildbot, ansible
+- include: w_python.yml
+  vars:
+    file: "{{ python_file }}"
+  tags: [python,buildbot]
+
+# dependency: buildbot
+- include: w_pywin32.yml
+  vars:
+    file: "{{ pywin32_file }}"
+  tags: [pywin32,buildbot]
+
 # dependency: repository
 - include: w_git.yml
   vars:
     file: "{{ git_file }}"
   tags: git
+
+# dependency: compiler
+- include: w_cmake.yml
+  vars:
+    file: "{{ cmake_file }}"
+  tags: cmake
+
+- include: w_7zip.yml
+  vars:
+    file: "{{ zip_file }}"
+  tags: 7zip
 
 # dependency: compiler
 - include: w_visualstudio.yml
@@ -20,34 +57,38 @@
     file: "{{ vcp27_file }}"
   tags: [python]
 
-# dependency: buildbot
-- include: w_python.yml
-  vars:
-    file: "{{ python_file }}"
-  tags: [python,buildbot]
-
-# dependency: buildbot
-- include: w_pywin32.yml
-  vars:
-    file: "{{ pywin32_file }}"
-  tags: [pywin32,buildbot]
-
 # dependency: symstore
 - include: w_wdk.yml
   vars:
     file: "{{ wdk_file }}"
   tags: wdk
 
-# dependency: compiler
-- include: w_cmake.yml
+- include: win_path.yml
   vars:
-    file: "{{ cmake_file }}"
-  tags: cmake
+    path: "{{ item }}"
+    level: machine
+  with_items:
+    - 'C:\Python27'
+    - 'C:\Python27\Scripts'
+    - 'C:\Program Files\Git\bin'
+    - 'C:\Program Files (x86)\CMake\bin'
+    - 'C:\Program Files\7-Zip'
+    - 'C:\Program Files (x86)\MSBuild\{{ vs_version }}\Bin'
 
-- include: w_7zip.yml
-  vars:
-    file: "{{ zip_file }}"
-  tags: 7zip
+- name: windows | Delete install files
+  win_file:
+    path: "{{ download_location }}\\{{ item }}"
+    state: absent
+  with_items:
+    - "{{ python_file }}"
+    - "{{ pywin32_file }}"
+    - "{{ git_file }}"
+    - "{{ cmake_file }}"
+    - "{{ zip_file }}"
+    - "{{ vs_file }}"
+    - "{{ vcp27_file }}"
+    - WDK.zip
+    - "wdk\\"
 
 ##
 ## PIP DEPENDENCIES
