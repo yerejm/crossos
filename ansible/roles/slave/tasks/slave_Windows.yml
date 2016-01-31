@@ -16,7 +16,7 @@
     - "{{ vcp27_file }}"
     - WDK.zip
 
-# dependency: buildbot, ansible
+# dependency: buildbot
 - include: w_python.yml
   vars:
     file: "{{ python_file }}"
@@ -119,26 +119,22 @@
     state: directory
   tags: buildbot
 
-- name: Install buildbot symbol store utility
-  win_copy:
-    src: files/storesymbols.bat
-    dest: "{{ buildbot_path}}/storesymbols.bat"
-  tags: buildbot
-
 ##
 ## SYMBOLSTORE
 ##
-
-- name: Create symbol store folder
-  win_file:
-    path: c:/symbols/
-    state: directory
+- name: Install buildbot symbol store utility
+  win_copy:
+    src: files/storesymbols.bat
+    dest: "{{ buildbot_path }}/storesymbols.bat"
   tags: buildbot
 
-- name: Create local symbol store folder
+- name: Create symbol store folders
   win_file:
-    path: c:/localsymbols/
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - c:/symbols/
+    - c:/localsymbols/
   tags: buildbot
 
 # https://randomascii.wordpress.com/2013/03/09/symbols-the-microsoft-way/
