@@ -5,10 +5,7 @@
   register: app
 
 - name: cmake | Install
-  win_package:
-    name: git
+  win_msi:
     path: "{{ download_location }}\\{{ file }}"
-    product_id: "CMake 3.4.1"
-    arguments: "/S"
+    state: present
   when: not app.stat.exists
-
