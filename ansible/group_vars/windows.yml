@@ -15,7 +15,7 @@ download_location: 'c:\tmp'
 etc_hosts_file: 'c:\windows\system32\drivers\etc\hosts'
 
 # Git for windows
-git_file: Git-2.7.0-64-bit.exe
+git_file: Git-2.7.4-64-bit.exe
 
 # Visual Studio ISO
 vs_file: vs2015.1.com_enu.iso
