@@ -28,7 +28,7 @@ zip_file: 7z1514-x64.msi
 python_file: python-2.7.11.amd64.msi
 
 # python win32 extensions.
-pywin32_file: pywin32-219.win-amd64-py2.7.exe
+pywin32_file: pywin32-220.win-amd64-py2.7.exe
 
 # Windows Development Kit
 wdk_file: wdksetup.exe
