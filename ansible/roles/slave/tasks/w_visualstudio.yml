@@ -18,7 +18,7 @@
   win_package:
     name: Visual Studio
     path: "d:\\vs_community.exe"
-    product_id: "{fcaa9dba-9438-48b6-ad91-4e9b4cc7084a}"
+    product_id: "{5c4dd346-d2b9-3b7b-9320-a90049d5e48b}"
     arguments: "/silent /norestart /norefresh /InstallSelectableItems NativeLanguageSupport_VC /l c:\\tmp\\vs\\log.txt"
   when: not app.stat.exists
   ignore_errors: true
