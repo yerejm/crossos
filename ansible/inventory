@@ -1,18 +1,20 @@
+[buildmaster]
+master
+
 [buildslaves]
 debian
 windows
 
 [unix]
+master
 debian
 
 [windows]
 windows
 
-[bots:children]
-buildslaves
-
 [all_hosts:children]
-bots
+buildmaster
+buildslaves
 
 [local]
 127.0.0.1

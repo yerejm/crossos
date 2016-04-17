@@ -1,14 +1,19 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby tabstop=2 expandtab shiftwidth=2 softtabstop=2 :
 SERVERS = {
+  :master => {
+    :ip => '172.31.70.40',
+    :provisioner => [:server, :enable_root_ssh],
+    :box => 'debian82',
+  },
   :debian => {
     :ip => '172.31.70.41',
-    :provisioner => [:common, :enable_root_ssh],
+    :provisioner => [:desktop, :enable_root_ssh],
     :box => 'debian82-desktop',
   },
   :windows => {
     :ip => '172.31.70.43',
-    :provisioner => [:common],
+    :provisioner => [:desktop],
     :box => 'eval-win81x64-enterprise',
   }
 }
@@ -23,13 +28,21 @@ def enable_root_ssh(cfg)
       "echo '#{pkey}' >> ~/.ssh/authorized_keys"
 end
 
-def common(cfg)
+def server(cfg)
+  cfg.cache.scope = :machine if Vagrant.has_plugin? "vagrant-cachier"
+  cfg.vm.provider "virtualbox" do |v|
+    v.cpus = 4
+    v.memory = 2048
+    v.gui = false
+  end
+end
+
+def desktop(cfg)
   cfg.cache.scope = :machine if Vagrant.has_plugin? "vagrant-cachier"
   cfg.vm.provider "virtualbox" do |v|
     v.cpus = 4
     v.memory = 4096
     v.customize ['modifyvm', :id, '--vram', 256]
-    v.gui = false
   end
 end
 

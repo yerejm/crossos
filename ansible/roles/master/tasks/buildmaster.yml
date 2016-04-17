@@ -1,0 +1,76 @@
+---
+##
+## USER
+##
+- name: buildbot | Add buildbot user
+  user:
+    name: "{{ buildbot_username }}"
+    home: "/home/{{ buildbot_username }}"
+    shell: /bin/bash
+    state: present
+
+- name: buildbot | Add public key to login as buildbot
+  authorized_key:
+    user: "{{ buildbot_username }}"
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+# buildmaster will change into fifoci to upload the test results fetched from
+# the fifoci slave into the fifoci (master) front end.
+- name: buildbot | Give buildmaster sudo
+  copy:
+    content: "{{ buildbot_username }} ALL=(ALL) NOPASSWD: ALL"
+    dest: "/etc/sudoers.d/{{ buildbot_username }}"
+    mode: 0440
+    validate: "visudo -cf %s"
+
+##
+## APT DEPENDENCIES
+##
+- name: buildbot | Install buildbot-master
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - buildbot
+    - python
+    - python-pip
+    - python-dev
+
+##
+## DEPLOY
+##
+- name: buildbot | Create bin directory
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  file:
+    path: ~/bin
+    state: directory
+
+##
+## BUILDBOT
+##
+# - name: buildbot | Create build master
+#   become: yes
+#   become_user: "{{ buildbot_username }}"
+#   command: "buildbot create-master"
+#   args:
+#     creates: buildbot.tac
+#
+# - name: buildbot | Enable buildmaster init.d
+#   template:
+#     src: etc_default_buildmaster.j2
+#     dest: /etc/default/buildmaster
+#     backup: yes
+#     mode: 0444
+#   notify: restart buildbot
+
+##
+## WEB
+##
+- name: buildbot | Enable nginx proxy
+  template:
+    src: buildbot.nginx.j2
+    dest: /etc/nginx/services/buildbot.nginx
+    mode: 0444
+  notify: restart nginx
+

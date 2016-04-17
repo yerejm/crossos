@@ -1,0 +1,5 @@
+---
+- include: master.yml
+  tags: master
+  when: ansible_hostname in groups['buildmaster']
+

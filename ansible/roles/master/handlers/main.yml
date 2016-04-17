@@ -1,0 +1,23 @@
+---
+- name: restart ircd
+  service:
+    name: inspircd
+    state: restarted
+
+- name: restart supervisor
+  service:
+    name: supervisor
+    state: restarted
+
+- name: restart buildbot
+  service:
+    name: buildmaster
+    state: restarted
+    enabled: yes
+    pattern: "--python=buildbot.tac"
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+

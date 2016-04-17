@@ -1,0 +1,20 @@
+---
+##
+## APT DEPENDENCIES
+##
+- name: nginx | Install nginx
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - nginx
+
+##
+## NGINX
+##
+- name: nginx | Start nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+

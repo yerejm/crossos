@@ -23,7 +23,4 @@ buildbot_username: buildbot
 # Details for the build master web front end.
 buildmaster_web_host: localhost
 buildmaster_web_port: 9989
-# The build master will fetch builds from the build slaves and place them in the
-# specified builds location.
-buildmaster_builds_location: /srv/http/dl
 

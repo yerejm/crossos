@@ -1,9 +1,9 @@
 ---
 - include: develop_Debian.yml
   tags: [develop,debian]
-  when: ansible_os_family == 'Debian'
+  when: ansible_hostname in groups['buildslaves'] and ansible_os_family == 'Debian'
 
 - include: develop_Windows.yml
   tags: [develop,windows]
-  when: ansible_os_family == 'Windows'
+  when: ansible_hostname.lower() in groups['buildslaves'] and ansible_os_family == 'Windows'
 
