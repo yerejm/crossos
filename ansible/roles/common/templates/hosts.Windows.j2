@@ -1,0 +1,24 @@
+#jinja2: newline_sequence:'\r\n'
+127.0.0.1 localhost
+
+# unix servers
+{% for item in groups['unix'] %}
+{% for ipaddr in hostvars[item]['ansible_all_ipv4_addresses'] %}
+{%- if ipaddr.startswith('172.31.70') %}
+{{ ipaddr }} {{ item }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+# windows servers
+{% for item in groups['windows'] %}
+{% for ipaddr in hostvars[item.lower()]['ansible_ip_addresses'] %}
+{%- if ipaddr.startswith('172.31.70') %}
+{{ ipaddr }} {{ item }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+# gateway (host)
+{{ hostvars[ansible_hostname.lower()]['ansible_interfaces'][0]['default_gateway'] }} gateway
+

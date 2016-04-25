@@ -2,6 +2,19 @@
 - name: Wait for WinRM
   local_action: wait_for port="{{ ansible_ssh_port }}" host="{{ inventory_hostname }}"
 
+#
+# HOSTS
+#
+- name: Add servers to windows /etc/hosts
+  win_template:
+    dest: "{{ etc_hosts_file }}"
+    src: hosts.Windows.j2
+  when: ansible_hostname.lower() in groups['windows']
+  tags: [common,hosts]
+
+#
+# Remove undesirable software
+#
 - name: Checking common setup
   win_stat:
     path: .common

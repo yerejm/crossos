@@ -2,6 +2,16 @@
 - name: Wait for SSH
   local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH
 
+#
+# HOSTS
+#
+- name: Add servers to unix /etc/hosts
+  template:
+    dest: "{{ etc_hosts_file }}"
+    src: hosts.Debian.j2
+  when: ansible_hostname in groups['unix']
+  tags: [common,hosts]
+
 ##
 ## APT
 ##

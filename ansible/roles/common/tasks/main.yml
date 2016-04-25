@@ -14,9 +14,3 @@
 - include: common_Windows.yml
   tags: [common,windows]
   when: ansible_os_family == 'Windows'
-
-##
-## HOSTS
-##
-- include: hosts.yml
-
