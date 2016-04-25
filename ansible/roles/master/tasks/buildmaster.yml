@@ -67,10 +67,10 @@
 ##
 ## WEB
 ##
-- name: buildbot | Enable nginx proxy
-  template:
-    src: buildbot.nginx.j2
-    dest: /etc/nginx/services/buildbot.nginx
-    mode: 0444
-  notify: restart nginx
-
+# - name: buildbot | Enable nginx proxy
+#   template:
+#     src: buildbot.nginx.j2
+#     dest: /etc/nginx/services/buildbot.nginx
+#     mode: 0444
+#   notify: restart nginx
+#

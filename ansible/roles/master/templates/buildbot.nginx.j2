@@ -1,7 +1,7 @@
 server {
     listen 80;
 
-    server_name {{ buildmaster_server_name }};
+    server_name {{ buildmaster_host }};
     access_log logs/buildbot.access.log main;
     location / {
         proxy_pass http://localhost:8010;
