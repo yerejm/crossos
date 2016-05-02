@@ -2,22 +2,11 @@
 127.0.0.1 localhost
 
 # unix servers
-{% for item in groups['unix'] %}
-{% for ipaddr in hostvars[item]['ansible_all_ipv4_addresses'] %}
-{%- if ipaddr.startswith('172.31.70') %}
-{{ ipaddr }} {{ item }}
-{% endif %}
-{% endfor %}
-{% endfor %}
+172.31.70.40 master
+172.31.70.41 debian
 
 # windows servers
-{% for item in groups['windows'] %}
-{% for ipaddr in hostvars[item.lower()]['ansible_ip_addresses'] %}
-{%- if ipaddr.startswith('172.31.70') %}
-{{ ipaddr }} {{ item }}
-{% endif %}
-{% endfor %}
-{% endfor %}
+172.31.70.43 windows
 
 # gateway (host)
 {{ hostvars[ansible_hostname.lower()]['ansible_interfaces'][0]['default_gateway'] }} gateway
