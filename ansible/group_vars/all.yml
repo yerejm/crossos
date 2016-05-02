@@ -1,7 +1,46 @@
 ---
-# The host and port of the build master.
-buildmaster_host: master
-buildmaster_port: 9989
+#-----------------------------------------------------------------------
+# ircd
+#-----------------------------------------------------------------------
+ircd:
+  host: master
+  port: 6667
 
+#-----------------------------------------------------------------------
+# Buildbot
+#-----------------------------------------------------------------------
+# Buildbot user account name
+buildbot_username: buildbot
+
+# buildmaster configuration
+#  host: server hostname or IP address of the build master
+#  web_port: buildbot web server port
+#  web_title: name of the buildbot instance
+#  web_url: URL of the project homepage
+#  repourl: Git repository URL
+#  repobranch: Git repository branch
+#  worker_port: connect port for buildbot workers
+buildmaster_host: master
+buildmaster_web_port: 8010
+buildmaster_name:
+buildmaster_url:
+buildmaster_branch: master
+buildmaster_worker_port: 9989
+#  irc_host: server hostname or IP address of an IRC server
+#  irc_port: IRC server port
+#  irc_nick: IRC nickname given to the buildmaster
+#  irc_channels: list of IRC channels the buildmaster will join (# not required)
+buildmaster_irc_host: master
+buildmaster_irc_port: 6667
+buildmaster_irc_channels:
+  - bbtest
+
+# hash of worker names (key) and passwords (value)
+buildworker_passwords:
+  worker: password
+
+#-----------------------------------------------------------------------
+# ttt
+#-----------------------------------------------------------------------
 ttt_repository: https://github.com/yerejm/ttt
 

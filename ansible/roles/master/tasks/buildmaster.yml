@@ -26,43 +26,92 @@
 ##
 ## APT DEPENDENCIES
 ##
-- name: buildbot | Install buildbot-master
+- name: buildbot | Install python
   apt:
     pkg: "{{ item }}"
     state: present
   with_items:
-    - buildbot
     - python
     - python-pip
     - python-dev
 
 ##
-## DEPLOY
-##
-- name: buildbot | Create bin directory
-  become: yes
-  become_user: "{{ buildbot_username }}"
-  file:
-    path: ~/bin
-    state: directory
-
-##
 ## BUILDBOT
 ##
-# - name: buildbot | Create build master
-#   become: yes
-#   become_user: "{{ buildbot_username }}"
-#   command: "buildbot create-master"
-#   args:
-#     creates: buildbot.tac
-#
-# - name: buildbot | Enable buildmaster init.d
-#   template:
-#     src: etc_default_buildmaster.j2
-#     dest: /etc/default/buildmaster
-#     backup: yes
-#     mode: 0444
-#   notify: restart buildbot
+# Note that buildbot is the 0.9 release due to large changes having been made
+# since the 0.8 release.
+- name: buildbot | Install buildbot
+  pip:
+    name: buildbot[bundle]
+    extra_args: --pre
+    state: present
+
+# debian's python has a six module that is too old for the latest buildbot, and
+# pip won't upgrade it by default. Alternatively, migrate to using virtualenv?
+- name: buildbot | Force reinstallation of python six module
+  pip:
+    name: six
+    extra_args: --force-reinstall
+    state: latest
+# change state to forcereinstall for ansible 2.1
+
+# Create the buildmaster in the buildbot home directory - there is only one
+# build master and there is only one system supervisor for it.
+- name: buildbot | Create build master
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  command: "buildbot create-master ."
+  args:
+    creates: "/home/{{ buildbot_username }}//buildbot.tac"
+
+- name: buildbot | Install master.cfg
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  copy:
+    src: buildbot_master.cfg
+    dest: "/home/{{ buildbot_username }}//master.cfg"
+
+- name: buildbot | Collate configuration
+  set_fact:
+    buildmaster:
+      host: "{{ buildmaster_host }}"
+      web_port: "{{ buildmaster_web_port }}"
+      name: "{{ buildmaster_name }}"
+      url: "{{ buildmaster_url }}"
+      branch: "{{ buildmaster_branch }}"
+      worker_port: "{{ buildmaster_worker_port }}"
+      irc_host: "{{ buildmaster_irc_host }}"
+      irc_port: "{{ buildmaster_irc_port }}"
+      irc_channels: "{{ buildmaster_irc_channels }}"
+
+- name: buildbot | Build buildmaster configuration file
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  copy:
+    content: "{{ buildmaster | to_nice_json }}"
+    dest: "/home/{{ buildbot_username }}//buildmaster-config.json"
+  notify: restart buildbot
+
+- name: buildbot | Build worker password file
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  copy:
+    content: "{{ buildworker_passwords | to_nice_json }}"
+    dest: "/home/{{ buildbot_username }}//worker-passwords.json"
+  notify: restart buildbot
+
+- name: buildbot | Enable buildmaster init.d
+  template:
+    src: etc_default_buildmaster.j2
+    dest: /etc/default/buildmaster
+  notify: restart buildbot
+
+- name: buildbot | Install buildmaster initscript
+  copy:
+    src: etc_initd_buildmaster
+    dest: /etc/init.d/buildmaster
+    mode: 755
+  notify: restart buildbot
 
 ##
 ## WEB
