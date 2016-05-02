@@ -63,6 +63,7 @@
   command: "buildbot create-master ."
   args:
     creates: "/home/{{ buildbot_username }}//buildbot.tac"
+  notify: restart buildbot
 
 - name: buildbot | Install master.cfg
   become: yes
@@ -70,6 +71,7 @@
   copy:
     src: buildbot_master.cfg
     dest: "/home/{{ buildbot_username }}//master.cfg"
+  notify: restart buildbot
 
 - name: buildbot | Collate configuration
   set_fact:
@@ -104,14 +106,12 @@
   template:
     src: etc_default_buildmaster.j2
     dest: /etc/default/buildmaster
-  notify: restart buildbot
 
 - name: buildbot | Install buildmaster initscript
   copy:
     src: etc_initd_buildmaster
     dest: /etc/init.d/buildmaster
     mode: 755
-  notify: restart buildbot
 
 ##
 ## WEB
