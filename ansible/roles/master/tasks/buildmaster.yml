@@ -34,33 +34,32 @@
     - python
     - python-pip
     - python-dev
+    - python-virtualenv
 
 ##
 ## BUILDBOT
 ##
 # Note that buildbot is the 0.9 release due to large changes having been made
-# since the 0.8 release.
+# since the 0.8 release. Uses python 2 on the debian master. The debian master
+# offers python 3.4, but buildbot has problems running on it.
 - name: buildbot | Install buildbot
+  become: yes
+  become_user: "{{ buildbot_username }}"
   pip:
-    name: buildbot[bundle]
+    name: "{{ item }}"
     extra_args: --pre
     state: present
-
-# debian's python has a six module that is too old for the latest buildbot, and
-# pip won't upgrade it by default. Alternatively, migrate to using virtualenv?
-- name: buildbot | Force reinstallation of python six module
-  pip:
-    name: six
-    extra_args: --force-reinstall
-    state: latest
-# change state to forcereinstall for ansible 2.1
+    virtualenv: "/home/{{ buildbot_username }}"
+    virtualenv_site_packages: no
+  with_items:
+    - buildbot[bundle]
 
 # Create the buildmaster in the buildbot home directory - there is only one
 # build master and there is only one system supervisor for it.
 - name: buildbot | Create build master
   become: yes
   become_user: "{{ buildbot_username }}"
-  command: "buildbot create-master ."
+  command: "~/bin/buildbot create-master ."
   args:
     creates: "/home/{{ buildbot_username }}//buildbot.tac"
   notify: restart buildbot
