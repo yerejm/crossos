@@ -61,7 +61,7 @@
 - name: Create build slave
   become: yes
   become_user: "{{ buildbot_username }}"
-  shell: "buildslave create-slave . {{ buildmaster_host }}:{{ buildmaster_port }} {{ slave_username }} {{ slave_password }}"
+  shell: "buildslave create-slave . {{ buildmaster_host }}:{{ buildmaster_worker_port }} {{ slave_username }} {{ slave_password }}"
   args:
     creates: info/admin
 
