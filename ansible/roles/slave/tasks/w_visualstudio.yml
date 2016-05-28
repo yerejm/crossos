@@ -20,8 +20,10 @@
     path: "d:\\vs_community.exe"
     product_id: "{5c4dd346-d2b9-3b7b-9320-a90049d5e48b}"
     arguments: "/silent /norestart /norefresh /InstallSelectableItems NativeLanguageSupport_VC /l c:\\tmp\\vs\\log.txt"
+  register: vsinstall
   when: not app.stat.exists
-  ignore_errors: true
+
+- debug: var=vsinstall verbosity=2
 
 - name: visual studio | Need to dismount?
   win_stat:
@@ -33,14 +35,8 @@
   when: mount.stat.exists
 
 - name: restart machine
-  raw: 'shutdown /r /t 2 /f /d p:4:1 /c "Ansible Shutdown for Visual Studio"'
-  async: 0
-  poll: 0
-  ignore_errors: true
-
-- name: waiting for server to come back
-  local_action: wait_for host={{ inventory_hostname }} port={{ ansible_ssh_port }} state=started delay=120
-  become: false
+  win_reboot:
+  when: vsinstall.restart_required
 
 - name: wait for vagrant mount
   win_stat:
