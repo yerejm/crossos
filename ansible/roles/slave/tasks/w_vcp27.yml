@@ -2,4 +2,5 @@
 - name: vcforpython27 | Install
   win_msi:
     path: "{{ download_location }}\\{{ file }}"
+    wait: True
     state: present
