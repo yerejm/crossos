@@ -1,7 +1,7 @@
 ---
 - name: python | Installed?
   win_stat:
-    path: "C:\\Python27"
+    path: "C:\\Python27\\python.exe"
   register: app
 
 - name: python | Install
