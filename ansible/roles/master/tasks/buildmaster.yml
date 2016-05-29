@@ -54,6 +54,17 @@
   with_items:
     - buildbot[bundle]
 
+- name: buildbot | Enable buildmaster init.d
+  template:
+    src: etc_default_buildmaster.j2
+    dest: /etc/default/buildmaster
+
+- name: buildbot | Install buildmaster initscript
+  copy:
+    src: etc_initd_buildmaster
+    dest: /etc/init.d/buildmaster
+    mode: 755
+
 # Create the buildmaster in the buildbot home directory - there is only one
 # build master and there is only one system supervisor for it.
 - name: buildbot | Create build master
@@ -61,7 +72,7 @@
   become_user: "{{ buildbot_username }}"
   command: "~/bin/buildbot create-master ."
   args:
-    creates: "/home/{{ buildbot_username }}//buildbot.tac"
+    creates: "/home/{{ buildbot_username }}/buildbot.tac"
   notify: restart buildbot
 
 - name: buildbot | Install master.cfg
@@ -69,7 +80,7 @@
   become_user: "{{ buildbot_username }}"
   copy:
     src: buildbot_master.cfg
-    dest: "/home/{{ buildbot_username }}//master.cfg"
+    dest: "/home/{{ buildbot_username }}/master.cfg"
   notify: restart buildbot
 
 - name: buildbot | Collate configuration
@@ -90,7 +101,7 @@
   become_user: "{{ buildbot_username }}"
   copy:
     content: "{{ buildmaster | to_nice_json }}"
-    dest: "/home/{{ buildbot_username }}//buildmaster-config.json"
+    dest: "/home/{{ buildbot_username }}/buildmaster-config.json"
   notify: restart buildbot
 
 - name: buildbot | Build worker password file
@@ -98,19 +109,8 @@
   become_user: "{{ buildbot_username }}"
   copy:
     content: "{{ buildworker_passwords | to_nice_json }}"
-    dest: "/home/{{ buildbot_username }}//worker-passwords.json"
+    dest: "/home/{{ buildbot_username }}/worker-passwords.json"
   notify: restart buildbot
-
-- name: buildbot | Enable buildmaster init.d
-  template:
-    src: etc_default_buildmaster.j2
-    dest: /etc/default/buildmaster
-
-- name: buildbot | Install buildmaster initscript
-  copy:
-    src: etc_initd_buildmaster
-    dest: /etc/init.d/buildmaster
-    mode: 755
 
 ##
 ## WEB
