@@ -194,3 +194,14 @@
     value: AutoAdminLogon
     datatype: dword
   tags: autologon
+
+- name: restart machine
+  win_reboot:
+
+- name: wait for vagrant mount
+  win_stat:
+      path: "c:\\tmp\\vagrant-cache"
+  register: mount
+  until: mount.stat.exists
+  retries: 10
+  delay: 6
