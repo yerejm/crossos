@@ -4,12 +4,12 @@ SERVERS = {
   :master => {
     :ip => '172.31.70.40',
     :provisioner => [:server, :enable_root_ssh],
-    :box => 'debian82',
+    :box => 'debian85',
   },
   :debian => {
     :ip => '172.31.70.41',
     :provisioner => [:desktop, :enable_root_ssh],
-    :box => 'debian82-desktop',
+    :box => 'debian85-desktop',
   },
   :windows => {
     :ip => '172.31.70.43',

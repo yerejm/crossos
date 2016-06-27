@@ -16,6 +16,8 @@
 #     start_mode: auto
 #     state: restarted
 
+# ignore errors on restart... debian is not able to stop the service, so the
+# subsequent start fails
 - name: restart debian buildbot
   service:
     name: buildslave
