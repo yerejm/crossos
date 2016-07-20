@@ -2,8 +2,9 @@
 ###
 ### ttt
 ###
-- name: develop | debian | Install ttt
+- name: develop | debian | ttt
   pip:
     name: 'git+{{ ttt_repository }}'
     editable: false
     state: present
+

@@ -39,3 +39,9 @@ cmake_file: cmake-win32-x86.msi
 # visual c++ for python 2.7
 vcp27_file: VCForPython27.msi
 
+# llvm release required to buld mesa llvmpipe.
+# mesa does not yet work with 3.8
+llvm_version: 3.7.1
+
+# mesa release
+mesa_version: 11.2.2

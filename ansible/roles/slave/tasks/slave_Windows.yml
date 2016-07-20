@@ -1,8 +1,31 @@
 ---
 ##
+## SYMBOLSTORE
+##
+
+- name: windows | Create symbol store folders
+  win_file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - c:/symbols/
+    - c:/localsymbols/
+
+# https://randomascii.wordpress.com/2013/03/09/symbols-the-microsoft-way/
+# https://msdn.microsoft.com/en-us/library/windows/hardware/ff537994%28v=vs.85%29.aspx
+- name: windows | Add symbol store to path
+  win_environment:
+    name: _NT_SYMBOL_PATH
+    value: 'srv*c:\localsymbols*c:\symbols*https://msdl.microsoft.com/download/symbols'
+    level: machine
+
+- name: windows | Install local symbols
+  raw: "xcopy /s /y {{ cache_location }}\\localsymbols\\* c:\\localsymbols"
+
+##
 ## BUILD DEPS
 ##
-- name: Download install files
+- name: windows | Download install files
   win_get_url:
     url: "file://{{ cache_location }}\\{{ item }}"
     dest: "{{ download_location }}\\{{ item }}"
@@ -15,6 +38,9 @@
     - "{{ vs_file }}"
     - "{{ vcp27_file }}"
     - WDK.zip
+    - "llvm-{{ llvm_version }}.src.tar.xz"
+    - "mesa-{{ mesa_version }}.tar.xz"
+    - "win_flex_bison-latest.zip"
 
 # dependency: buildbot
 - include: w_python.yml
@@ -75,6 +101,10 @@
     - 'C:\Program Files\7-Zip'
     - 'C:\Program Files (x86)\MSBuild\{{ vs_version }}\Bin'
 
+# opengl software renderer
+- include: w_opengl.yml
+  tags: opengl
+
 - name: windows | Delete install files
   win_file:
     path: "{{ download_location }}\\{{ item }}"
@@ -88,20 +118,22 @@
     - "{{ vs_file }}"
     - "{{ vcp27_file }}"
     - WDK.zip
-    - "wdk\\"
+    - "llvm-{{ llvm_version }}.src.tar.xz"
+    - "mesa-{{ mesa_version }}.tar.xz"
+    - "win_flex_bison-latest.zip"
 
 ##
 ## PIP DEPENDENCIES
 ##
 # http://trac.buildbot.net/wiki/RunningBuildbotOnWindows
-- name: Install buildslave
+- name: windows | Install buildslave
   raw: "pip install buildbot-slave"
   tags: buildbot
 
 ##
 ## BUILDBOT DEPLOY
 ##
-- name: Create buildbot user
+- name: windows | Create buildbot user
   win_user:
     name: "{{ buildbot_username }}"
     password: "{{ buildbot_username }}"
@@ -109,68 +141,41 @@
     state: present
   tags: buildbot
 
-- name: Set buildbot path
+- name: windows | Set buildbot path
   set_fact:
     buildbot_path: "c:\\{{ buildbot_username }}"
 
-- name: Create buildbot area
+- name: windows | Create buildbot area
   win_file:
     path: "{{ buildbot_path }}\\"
     state: directory
   tags: buildbot
 
-##
-## SYMBOLSTORE
-##
-- name: Install buildbot symbol store utility
-  win_copy:
-    src: files/storesymbols.bat
-    dest: "{{ buildbot_path }}/storesymbols.bat"
-  tags: buildbot
-
-- name: Create symbol store folders
-  win_file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - c:/symbols/
-    - c:/localsymbols/
-  tags: buildbot
-
-# https://randomascii.wordpress.com/2013/03/09/symbols-the-microsoft-way/
-# https://msdn.microsoft.com/en-us/library/windows/hardware/ff537994%28v=vs.85%29.aspx
-- name: Add symbol store to path
-  win_environment:
-    name: _NT_SYMBOL_PATH
-    value: 'srv*c:\localsymbols*c:\symbols*https://msdl.microsoft.com/download/symbols'
-    level: machine
-  tags: buildbot
-
 #
 # BUILDBOT
 #
-- name: Create build slave
+- name: windows | Create build slave
   raw: "buildslave create-slave {{ buildbot_path }} {{ buildmaster_host }}:{{ buildmaster_worker_port }} {{ slave_username }} {{ slave_password }}"
   tags: buildbot
 
 # Adding the service does not grant the logon privilege. This must be done
 # explicitly.
-- name: Install logon as service privilege utility
+- name: windows | Install logon as service privilege utility
   win_copy:
     src: files/lsa_add_logon_as_svc.ps1
     dest: c:/tmp/lsa_add_logon_as_svc.ps1
   tags: buildbot
 
-- name: Allow buildbot service logon
+- name: windows | Allow buildbot service logon
   raw: "powershell c:\\tmp\\lsa_add_logon_as_svc.ps1 {{ buildbot_username }}"
   tags: buildbot
 
-- name: Create buildbot service
+- name: windows | Create buildbot service
   raw: "c:\\python27\\python.exe c:\\python27\\scripts\\buildbot_service.py --user .\\{{ buildbot_username }} --password {{ buildbot_username }} --startup auto install"
   notify: restart windows buildbot
   tags: buildbot
 
-- name: Set buildbot service registry
+- name: windows | Set buildbot service registry
   win_regedit:
     key: HKLM:\SYSTEM\CurrentControlSet\services\Buildbot\Parameters
     data: "{{ buildbot_path }}"
@@ -178,7 +183,13 @@
     datatype: string
   tags: buildbot
 
-- name: Start build slave
+- name: windows | Install buildbot symbol store utility
+  win_copy:
+    src: files/storesymbols.bat
+    dest: "{{ buildbot_path }}/storesymbols.bat"
+  tags: buildbot
+
+- name: windows | Start build slave
   win_service:
     name: BuildBot
     start_mode: auto
@@ -187,7 +198,7 @@
 #
 # Finalisation
 #
-- name: Enable autologon
+- name: windows | Enable autologon
   win_regedit:
     key: HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
     data: 1
@@ -195,10 +206,10 @@
     datatype: dword
   tags: autologon
 
-- name: restart machine
+- name: windows | restart machine
   win_reboot:
 
-- name: wait for vagrant mount
+- name: windows | wait for vagrant mount
   win_stat:
       path: "c:\\tmp\\vagrant-cache"
   register: mount

@@ -1,0 +1,125 @@
+---
+###
+### Mesa llvmpipe OpenGL 3.3 software renderer
+###
+### Windows on virtualbox is limited to 2.1 at best.
+###
+### Mesa requires llvm<=3.7, scons<=2.4
+### https://sites.google.com/site/buildllvmpipe/
+
+- name: opengl | Install scons
+  raw: "pip install --egg Scons==2.4.1"
+
+- name: opengl | Install python-mako
+  raw: pip install mako
+
+- name: opengl | Install flex/bison
+  win_unzip:
+    src: "{{ cache_location }}\\win_flex_bison-latest.zip"
+    dest: "{{ download_location }}\\flexbison"
+    creates: "{{ download_location }}\\flexbison\\win_flex.exe"
+
+- include: win_path.yml
+  vars:
+    path: c:\\tmp\\flexbison
+    level: user
+
+- name: opengl | Create build area
+  win_file:
+    path: c:\\tmp\\llvmpipe
+    state: directory
+    mode: 0755
+
+# winrm settings need to be increased or else llvm build fails with errors
+# about not enough quota (max processes per shell) and not enough heap
+# (max memory per shell).
+- name: opengl | Set winrm MaxProcessesPerShell
+  raw: winrm set winrm/config/winrs '@{MaxProcessesPerShell="50"}'
+
+- name: opengl | Set winrm MaxMemoryPerShellMB
+  raw: winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="2048"}'
+
+- name: opengl | Create LLVM build area
+  win_file:
+    path: c:\\tmp\\llvmpipe\\llvm-build
+    state: directory
+    mode: 0755
+
+- name: opengl | LLVM built?
+  win_stat:
+    path: "C:\\llvm"
+  register: llvm
+
+- name: opengl | LLVM extracted?
+  win_stat:
+    path: "c:\\tmp\\llvmpipe\\llvm-{{ llvm_version }}.src"
+  register: llvm_extracted
+
+- name: opengl | Extract LLVM tar
+  raw: "7z x -y -o{{ download_location }} {{ cache_location }}\\llvm-{{ llvm_version }}.src.tar.xz"
+  when: not llvm_extracted.stat.exists or not llvm.stat.exists
+
+- name: opengl | Extract LLVM source
+  raw: "7z x -y -oc:\\tmp\\llvmpipe {{ download_location }}\\llvm-{{ llvm_version }}.src.tar"
+  when: not llvm_extracted.stat.exists or not llvm.stat.exists
+
+# build type here is to silence the warning - it is otherwise useless
+- name: opengl | Configure LLVM build
+  raw: "cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=c:\\llvm -DLLVM_USE_CRT_RELEASE=MT -Hc:\\tmp\\llvmpipe\\llvm-{{ llvm_version }}.src -Bc:\\tmp\\llvmpipe\\llvm-build"
+  when: not llvm.stat.exists
+
+# && in raw command does not work - must call it through cmd
+- name: opengl | Build LLVM
+  raw: cmd /c "cd /d c:\\tmp\\llvmpipe\\llvm-build && msbuild INSTALL.vcxproj /p:Configuration=Release /m"
+  when: not llvm.stat.exists
+
+- name: opengl | Set LLVM environment variable
+  win_environment:
+    name: LLVM
+    value: c:\\llvm
+    state: present
+    level: user
+
+- name: opengl | Mesa built?
+  win_stat:
+    path: "C:\\mesa"
+  register: mesa
+
+- name: opengl | Mesa extracted?
+  win_stat:
+    path: "c:\\tmp\\llvmpipe\\mesa-{{ mesa_version }}"
+  register: mesa_extracted
+
+- name: opengl | Extract Mesa tar
+  raw: "7z x -y -o{{ download_location }} {{ cache_location }}\\mesa-{{ mesa_version }}.tar.xz"
+  when: not mesa_extracted.stat.exists or not mesa.stat.exists
+
+- name: opengl | Extract Mesa source
+  raw: "7z x -y -oc:\\tmp\\llvmpipe {{ download_location }}\\mesa-{{ mesa_version }}.tar"
+  when: not mesa_extracted.stat.exists or not mesa.stat.exists
+
+# && in raw command does not work - must call it through cmd
+- name: opengl | Build Mesa
+  raw: cmd /c "cd /d c:\\tmp\\llvmpipe\\mesa-{{ mesa_version }} && scons build=release llvm=yes machine=x86 libgl-gdi"
+  when: not mesa.stat.exists
+
+- name: opengl | Install Mesa library
+  raw: "xcopy /s /y c:\\tmp\\llvmpipe\\mesa-{{ mesa_version }}\\build\\windows-x86\\gallium\\targets\\libgl-gdi\\* c:\\mesa\\"
+  when: not mesa.stat.exists
+
+- name: opengl | Set MESA environment variable
+  win_environment:
+    name: MESA
+    value: c:\\mesa
+    state: present
+    level: user
+
+- name: opengl | Delete install files
+  win_file:
+    path: "{{ download_location }}\\{{ item }}"
+    state: absent
+  with_items:
+    - "llvm-{{ llvm_version }}.src.tar"
+    - "mesa-{{ mesa_version }}.tar"
+    - llvmpipe
+

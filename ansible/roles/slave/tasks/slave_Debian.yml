@@ -48,6 +48,12 @@
     - libgl1-mesa-dev
     - mesa-common-dev
 
+#
+# OPENGL
+#
+- include: debian_opengl.yml
+  tags: opengl
+
 ##
 ## BUILDBOT
 ##

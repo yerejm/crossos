@@ -1,0 +1,99 @@
+---
+###
+### OPENGL
+###
+### Mesa llvmpipe OpenGL 3.3 software renderer
+###
+### Linux on virtualbox is limited to 2.1 at best, but debian installs the 3.0
+### llvmpipe software renderer which still isn't good enough.
+###
+### Mesa requires llvm<=3.7, scons<=2.4
+###
+- name: opengl | Install build dependecies
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - scons
+    - flex
+    - bison
+    - python-mako
+    - pkg-config
+
+- name: opengl | Create build area
+  file:
+    path: ~/llvmpipe
+    state: directory
+    mode: 0755
+
+- name: opengl | Extract LLVM source
+  unarchive:
+    src: http://llvm.org/releases/3.7.1/llvm-3.7.1.src.tar.xz
+    dest: ~/llvmpipe
+    copy: no
+    creates: ~/llvmpipe/llvm-3.7.1.src
+
+- name: opengl | Create LLVM build area
+  file:
+    path: ~/llvmpipe/llvm-build
+    state: directory
+    mode: 0755
+
+- name: opengl | Configure LLVM build
+  shell: ../llvm-3.7.1.src/configure --prefix=$HOME/llvm
+  args:
+    chdir: ~/llvmpipe/llvm-build
+    creates: ~/llvmpipe/llvm-build/Makefile
+
+- name: opengl | Build LLVM
+  shell: make -j4 && make install
+  args:
+    chdir: ~/llvmpipe/llvm-build
+    creates: ~/llvm
+
+- name: opengl | Install Mesa source
+  unarchive:
+    src: https://mesa.freedesktop.org/archive/11.2.2/mesa-11.2.2.tar.xz
+    dest: ~/llvmpipe
+    copy: no
+    creates: ~/llvmpipe/mesa-11.2.2
+
+# scons must be at most 2.4 for mesa to build
+- name: opengl | Build Mesa
+  shell: LLVM=~/llvm scons build=release llvm=yes libgl-xlib
+  args:
+    chdir: ~/llvmpipe/mesa-11.2.2
+    creates: ~/llvmpipe/mesa-11.2.2/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5
+
+- name: opengl | Install Mesa library
+  shell: cp ~/llvmpipe/mesa-11.2.2/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5 /usr/local/lib/libGL.so.1.5
+  args:
+    creates: /usr/local/lib/libGL.so.1.5
+
+- name: opengl | Link Mesa library
+  file:
+    src: /usr/local/lib/libGL.so.1.5
+    path: "/usr/local/lib/{{ item }}"
+    state: link
+  with_items:
+    - libGL.so.1
+    - libGL.so
+
+- name: opengl | Set LD_LIBRARY_PATH for buildbot
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  lineinfile:
+    dest: ~/.bashrc
+    line: export LD_LIBRARY_PATH=/usr/local/lib
+    insertafter: EOF
+    state: present
+
+- name: opengl | Set LD_LIBRARY_PATH for vagrant
+  become: yes
+  become_user: vagrant
+  lineinfile:
+    dest: ~/.bashrc
+    line: export LD_LIBRARY_PATH=/usr/local/lib
+    insertafter: EOF
+    state: present
+
