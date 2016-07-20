@@ -43,6 +43,11 @@ def desktop(cfg)
     v.cpus = 4
     v.memory = 4096
     v.customize ['modifyvm', :id, '--vram', 256]
+    v.customize ["setextradata", :id, "CustomVideoMode1", "1024x768x32"]
+    v.customize ["modifyvm", :id, "--ioapic", "on"]
+    v.customize ["modifyvm", :id, "--rtcuseutc", "on"]
+    v.customize ["modifyvm", :id, "--accelerate3d", "on"]
+    v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
   end
 end
 
