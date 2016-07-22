@@ -41,6 +41,12 @@
     - "llvm-{{ llvm_version }}.src.tar.xz"
     - "mesa-{{ mesa_version }}.tar.xz"
     - "win_flex_bison-latest.zip"
+    - AddOGLW8and10x64.reg
+
+# https://www.virtualbox.org/ticket/12048
+# No OpenGL Support for Windows 8
+- name: Fix VirtualBox OpenGL 2.1 support
+  raw: "reg import {{ download_location }}\\AddOGLW8and10x64.reg"
 
 # dependency: buildbot
 - include: w_python.yml
@@ -121,6 +127,7 @@
     - "llvm-{{ llvm_version }}.src.tar.xz"
     - "mesa-{{ mesa_version }}.tar.xz"
     - "win_flex_bison-latest.zip"
+    - AddOGLW8and10x64.reg
 
 ##
 ## PIP DEPENDENCIES
