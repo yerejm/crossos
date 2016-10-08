@@ -15,26 +15,26 @@ download_location: 'c:\tmp'
 etc_hosts_file: 'c:\windows\system32\drivers\etc\hosts'
 
 # Git for windows
-git_file: Git-64-bit.exe
+git_file: Git-2.9.0-64-bit.exe
 
 # Visual Studio ISO
-vs_file: vs2015.com_enu.iso
+vs_file: vs2015.3.com_enu.iso
 vs_version: 14.0
 
 # 7zip for windows
-zip_file: 7z-x64.msi
+zip_file: 7z1602-x64.msi
 
 # Python for windows. This must be version 2 due to buildbot.
-python_file: python-2.7.amd64.msi
+python_file: python-2.7.12.amd64.msi
 
 # python win32 extensions.
-pywin32_file: pywin32.win-amd64-py2.7.exe
+pywin32_file: pywin32-220.win-amd64-py2.7.exe
 
 # Windows Development Kit
-wdk_file: wdksetup.exe
+wdk_file: WDK.zip
 
 # cmake
-cmake_file: cmake-win32-x86.msi
+cmake_file: cmake-3.6.1-win64-x64.msi
 
 # visual c++ for python 2.7
 vcp27_file: VCForPython27.msi

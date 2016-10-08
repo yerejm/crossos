@@ -7,15 +7,15 @@
 
 - name: Extract WDK
   win_unzip:
-    src: "{{ download_location }}\\WDK.zip"
+    src: "{{ download_location }}\\{{ wdk_file }}"
     dest: "{{ download_location }}"
-    creates: "{{ download_location }}\\wdk\\{{ file }}"
+    creates: "{{ download_location }}\\wdk\\wdksetup.exe"
   when: not app.stat.exists
 
 - name: wdk | Install
   win_package:
     name: WDK
-    path: "{{ download_location }}\\wdk\\{{ file }}"
+    path: "{{ download_location }}\\wdk\\wdksetup.exe"
     product_id: "{aba88724-37eb-4f03-b83b-45199c5a7cf5}"
     arguments: "/norestart /q /ceip off"
   when: not app.stat.exists

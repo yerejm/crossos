@@ -36,7 +36,7 @@
 
 - name: restart machine
   win_reboot:
-  when: vsinstall.restart_required
+  when: vsinstall and vsinstall.restart_required
 
 - name: wait for vagrant mount
   win_stat:

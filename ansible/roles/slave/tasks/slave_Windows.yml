@@ -37,7 +37,7 @@
     - "{{ zip_file }}"
     - "{{ vs_file }}"
     - "{{ vcp27_file }}"
-    - WDK.zip
+    - "{{ wdk_file }}"
     - "llvm-{{ llvm_version }}.src.tar.xz"
     - "mesa-{{ mesa_version }}.tar.xz"
     - "win_flex_bison-latest.zip"
@@ -103,7 +103,7 @@
     - 'C:\Python27'
     - 'C:\Python27\Scripts'
     - 'C:\Program Files\Git\bin'
-    - 'C:\Program Files (x86)\CMake\bin'
+    - 'C:\Program Files\CMake\bin'
     - 'C:\Program Files\7-Zip'
     - 'C:\Program Files (x86)\MSBuild\{{ vs_version }}\Bin'
 
@@ -123,7 +123,7 @@
     - "{{ zip_file }}"
     - "{{ vs_file }}"
     - "{{ vcp27_file }}"
-    - WDK.zip
+    - "{{ wdk_file }}"
     - "llvm-{{ llvm_version }}.src.tar.xz"
     - "mesa-{{ mesa_version }}.tar.xz"
     - "win_flex_bison-latest.zip"

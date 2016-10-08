@@ -1,7 +1,7 @@
 ---
 - name: cmake | Installed?
   win_stat:
-    path: "C:\\Program Files (x86)\\CMake"
+    path: "C:\\Program Files\\CMake"
   register: app
 
 - name: cmake | Install
