@@ -1,5 +1,6 @@
 ---
 - include: master.yml
   tags: master
-  when: ansible_hostname in groups['buildmaster']
+  when: ansible_hostname.lower() in groups['buildmaster']
+  static: no
 
