@@ -102,6 +102,7 @@
   copy:
     content: "{{ buildmaster | to_nice_json }}"
     dest: "/home/{{ buildbot_username }}/buildmaster-config.json"
+    mode: 0400
   notify: restart buildbot
 
 - name: buildbot | Build worker password file
@@ -110,6 +111,7 @@
   copy:
     content: "{{ buildworker_passwords | to_nice_json }}"
     dest: "/home/{{ buildbot_username }}/worker-passwords.json"
+    mode: 0400
   notify: restart buildbot
 
 ##
