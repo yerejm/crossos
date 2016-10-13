@@ -7,6 +7,8 @@
     name: "{{ buildbot_username }}"
     home: "/home/{{ buildbot_username }}"
     shell: /bin/bash
+    groups: www-data
+    append: yes
     state: present
 
 - name: buildbot | Add public key to login as buildbot
@@ -82,6 +84,7 @@
     src: buildbot_master.cfg
     dest: "/home/{{ buildbot_username }}/master.cfg"
   notify: restart buildbot
+  tags: buildmaster
 
 - name: buildbot | Collate configuration
   set_fact:
@@ -95,6 +98,7 @@
       irc_host: "{{ buildmaster_irc_host }}"
       irc_port: "{{ buildmaster_irc_port }}"
       irc_channels: "{{ buildmaster_irc_channels }}"
+  tags: buildmaster
 
 - name: buildbot | Build buildmaster configuration file
   become: yes
@@ -104,6 +108,7 @@
     dest: "/home/{{ buildbot_username }}/buildmaster-config.json"
     mode: 0400
   notify: restart buildbot
+  tags: buildmaster
 
 - name: buildbot | Build worker password file
   become: yes
@@ -113,6 +118,23 @@
     dest: "/home/{{ buildbot_username }}/worker-passwords.json"
     mode: 0400
   notify: restart buildbot
+  tags: buildmaster
+
+- name: buildbot | Install report collator
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  copy:
+    src: present.sh
+    dest: "/home/{{ buildbot_username }}/bin/present.sh"
+    mode: 0500
+
+- name: Create builds area
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  file:
+    path: /var/www/html/builds
+    state: directory
+    mode: 0755
 
 ##
 ## WEB

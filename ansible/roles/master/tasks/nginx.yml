@@ -18,3 +18,10 @@
     state: started
     enabled: yes
 
+- name: Change www location owner
+  file:
+    path: /var/www/html
+    owner: www-data
+    group: www-data
+    mode: 0775
+

@@ -47,12 +47,43 @@
     - mesa-utils
     - libgl1-mesa-dev
     - mesa-common-dev
+    - libpcre3-dev
+    - lcov
+    - subversion
 
 #
 # OPENGL
 #
 - include: debian_opengl.yml
   tags: opengl
+
+#
+# scan-build
+#
+- name: Install scan-build installer
+  template:
+    src: install_scanbuild.sh
+    dest: ~/install_scanbuild
+    mode: 0700
+
+- name: Install scan-build
+  shell: ~/install_scanbuild
+  args:
+    creates: /usr/local/bin/scan-build
+
+#
+# cppcheck
+#
+- name: Install cppcheck installer
+  template:
+    src: install_cppcheck.sh
+    dest: ~/install_cppcheck
+    mode: 0700
+
+- name: Install cppcheck
+  shell: ~/install_cppcheck
+  args:
+    creates: /usr/local/cppcheck/bin/cppcheck
 
 ##
 ## BUILDBOT
@@ -67,7 +98,7 @@
 - name: Create build slave
   become: yes
   become_user: "{{ buildbot_username }}"
-  shell: "buildslave create-slave . {{ buildmaster_host }}:{{ buildmaster_worker_port }} {{ slave_username }} {{ slave_password }}"
+  shell: "buildslave create-slave --umask=022 . {{ buildmaster_host }}:{{ buildmaster_worker_port }} {{ slave_username }} {{ slave_password }}"
   args:
     creates: info/admin
 
