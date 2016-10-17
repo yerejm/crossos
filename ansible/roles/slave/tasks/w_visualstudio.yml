@@ -14,6 +14,9 @@
   raw: "powershell mount-diskimage {{ download_location }}\\{{ file }}"
   when: not app.stat.exists and not mount.stat.exists
 
+- set_fact:
+    vsinstall: false
+
 - name: visual studio | Install
   win_package:
     name: Visual Studio
