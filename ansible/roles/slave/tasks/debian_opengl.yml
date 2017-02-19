@@ -53,20 +53,20 @@
 
 - name: opengl | Install Mesa source
   unarchive:
-    src: https://mesa.freedesktop.org/archive/11.2.2/mesa-11.2.2.tar.xz
+    src: https://mesa.freedesktop.org/archive/13.0.4/mesa-13.0.4.tar.xz
     dest: ~/llvmpipe
     copy: no
-    creates: ~/llvmpipe/mesa-11.2.2
+    creates: ~/llvmpipe/mesa-13.0.4
 
 # scons must be at most 2.4 for mesa to build
 - name: opengl | Build Mesa
   shell: LLVM=~/llvm scons build=release llvm=yes libgl-xlib
   args:
-    chdir: ~/llvmpipe/mesa-11.2.2
-    creates: ~/llvmpipe/mesa-11.2.2/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5
+    chdir: ~/llvmpipe/mesa-13.0.4
+    creates: ~/llvmpipe/mesa-13.0.4/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5
 
 - name: opengl | Install Mesa library
-  shell: cp ~/llvmpipe/mesa-11.2.2/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5 /usr/local/lib/libGL.so.1.5
+  shell: cp ~/llvmpipe/mesa-13.0.4/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5 /usr/local/lib/libGL.so.1.5
   args:
     creates: /usr/local/lib/libGL.so.1.5
 

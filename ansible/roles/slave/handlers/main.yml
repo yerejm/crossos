@@ -22,7 +22,6 @@
   service:
     name: buildslave
     enabled: yes
-    pattern: /usr/bin/buildslave
     state: restarted
   when: ansible_os_family == 'Debian'
   ignore_errors: yes
