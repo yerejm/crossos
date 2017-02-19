@@ -38,12 +38,26 @@
     - python-dev
     - python-virtualenv
 
+- name: buildbot | Upgrade pip
+  pip:
+    name: pip
+    state: latest
+
 ##
 ## BUILDBOT
 ##
 # Note that buildbot is the 0.9 release due to large changes having been made
 # since the 0.8 release. Uses python 2 on the debian master. The debian master
 # offers python 3.4, but buildbot has problems running on it.
+- name: buildbot | Upgrade venv pip
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  pip:
+    name: pip
+    state: latest
+    virtualenv: "/home/{{ buildbot_username }}"
+    virtualenv_site_packages: no
+
 - name: buildbot | Install buildbot
   become: yes
   become_user: "{{ buildbot_username }}"
