@@ -9,7 +9,6 @@
     name: buildmaster
     state: restarted
     enabled: yes
-    pattern: "--python=buildbot.tac"
 
 - name: restart nginx
   service:
