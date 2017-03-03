@@ -44,4 +44,4 @@ vcp27_file: VCForPython27.msi
 llvm_version: 3.7.1
 
 # mesa release
-mesa_version: 11.2.2
+mesa_version: 13.0.5
