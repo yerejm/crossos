@@ -9,12 +9,11 @@
 # For FreeBSD, the same applies. Exit code used instead of the pattern.
 # For Windows, there is no support for handlers.
 ---
-# no support for handlers in windows yet
-# - name: restart windows buildbot
-#   win_service:
-#     name: BuildBot
-#     start_mode: auto
-#     state: restarted
+- name: restart windows buildbot
+  win_service:
+    name: BuildBot
+    start_mode: auto
+    state: restarted
 
 # ignore errors on restart... debian is not able to stop the service, so the
 # subsequent start fails
