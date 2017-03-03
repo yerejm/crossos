@@ -23,6 +23,7 @@
     path: "d:\\vs_community.exe"
     product_id: "{5c4dd346-d2b9-3b7b-9320-a90049d5e48b}"
     arguments: "/silent /norestart /norefresh /InstallSelectableItems NativeLanguageSupport_VC /l c:\\tmp\\vs\\log.txt"
+    expected_return_code: [0,3010]
   register: vsinstall
   when: not app.stat.exists
 
@@ -39,7 +40,7 @@
 
 - name: restart machine
   win_reboot:
-  when: vsinstall and vsinstall.restart_required
+  when: vsinstall and 'restart_required' in vsinstall and vsinstall.restart_required
 
 - name: wait for vagrant mount
   win_stat:
