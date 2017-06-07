@@ -5,7 +5,7 @@
   register: a
 
 - name: Get current path
-  raw: $Env:Path
+  win_shell: $Env:Path
   register: current_path
   when: a.stat.exists
 

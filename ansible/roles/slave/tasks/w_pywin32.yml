@@ -5,6 +5,6 @@
   register: app
 
 - name: pywin32 | Install
-  raw: "c:\\python27\\scripts\\easy_install {{ download_location }}\\{{ file }}"
+  win_shell: "c:\\python27\\scripts\\easy_install {{ download_location }}\\{{ file }}"
   when: not app.stat.exists
 

@@ -20,7 +20,7 @@
     level: machine
 
 - name: windows | Install local symbols
-  raw: "xcopy /s /y {{ cache_location }}\\localsymbols\\* c:\\localsymbols"
+  win_shell: "xcopy /s /y {{ cache_location }}\\localsymbols\\* c:\\localsymbols"
 
 ##
 ## BUILD DEPS
@@ -46,7 +46,7 @@
 # https://www.virtualbox.org/ticket/12048
 # No OpenGL Support for Windows 8
 - name: Fix VirtualBox OpenGL 2.1 support
-  raw: "reg import {{ download_location }}\\AddOGLW8and10x64.reg"
+  win_shell: "reg import {{ download_location }}\\AddOGLW8and10x64.reg"
 
 # dependency: buildbot
 - include: w_python.yml
@@ -134,7 +134,7 @@
 ##
 # http://trac.buildbot.net/wiki/RunningBuildbotOnWindows
 - name: windows | Install buildslave
-  raw: "pip install buildbot-slave"
+  win_shell: pip install buildbot-slave
   tags: buildbot
 
 ##
@@ -162,7 +162,7 @@
 # BUILDBOT
 #
 - name: windows | Create build slave
-  raw: "buildslave create-slave {{ buildbot_path }} {{ buildmaster_host }}:{{ buildmaster_worker_port }} {{ slave_username }} {{ slave_password }}"
+  win_shell: "buildslave create-slave {{ buildbot_path }} {{ buildmaster_host }}:{{ buildmaster_worker_port }} {{ slave_username }} {{ slave_password }}"
   tags: buildbot
 
 # Adding the service does not grant the logon privilege. This must be done
@@ -174,11 +174,11 @@
   tags: buildbot
 
 - name: windows | Allow buildbot service logon
-  raw: "powershell c:\\tmp\\lsa_add_logon_as_svc.ps1 {{ buildbot_username }}"
+  win_shell: "c:\\tmp\\lsa_add_logon_as_svc.ps1 {{ buildbot_username }}"
   tags: buildbot
 
 - name: windows | Create buildbot service
-  raw: "c:\\python27\\python.exe c:\\python27\\scripts\\buildbot_service.py --user .\\{{ buildbot_username }} --password {{ buildbot_username }} --startup auto install"
+  win_shell: "c:\\python27\\python.exe c:\\python27\\scripts\\buildbot_service.py --user .\\{{ buildbot_username }} --password {{ buildbot_username }} --startup auto install"
   notify: restart windows buildbot
   tags: buildbot
 

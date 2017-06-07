@@ -4,5 +4,5 @@
 ###
 
 - name: develop | windows | Install ttt
-  raw: "pip install git+{{ ttt_repository }}"
+  win_shell: "pip install git+{{ ttt_repository }}"
 

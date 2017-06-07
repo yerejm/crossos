@@ -11,7 +11,7 @@
   when: not app.stat.exists
 
 - name: visual studio | Mount ISO
-  raw: "powershell mount-diskimage {{ download_location }}\\{{ file }}"
+  win_shell: "mount-diskimage {{ download_location }}\\{{ file }}"
   when: not app.stat.exists and not mount.stat.exists
 
 - set_fact:
@@ -35,7 +35,7 @@
   register: mount
 
 - name: visual studio | Dismount ISO
-  raw: "powershell dismount-diskimage {{ download_location }}\\{{ file }}"
+  win_shell: "dismount-diskimage {{ download_location }}\\{{ file }}"
   when: mount.stat.exists
 
 - name: restart machine
