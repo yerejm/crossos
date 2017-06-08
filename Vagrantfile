@@ -4,17 +4,17 @@ SERVERS = {
   :master => {
     :ip => '172.31.70.40',
     :provisioner => [:server, :enable_root_ssh],
-    :box => 'debian85',
+    :box => 'debian8',
   },
   :debian => {
     :ip => '172.31.70.41',
     :provisioner => [:desktop, :enable_root_ssh],
-    :box => 'debian85-desktop',
+    :box => 'debian8-desktop',
   },
   :windows => {
     :ip => '172.31.70.43',
     :provisioner => [:desktop],
-    :box => 'eval-win81x64-enterprise',
+    :box => 'eval-win10x64-enterprise',
   }
 }
 
