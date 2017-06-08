@@ -19,9 +19,6 @@
     value: 'srv*c:\localsymbols*c:\symbols*https://msdl.microsoft.com/download/symbols'
     level: machine
 
-- name: windows | Install local symbols
-  win_shell: "xcopy /s /y {{ cache_location }}\\localsymbols\\* c:\\localsymbols"
-
 ##
 ## BUILD DEPS
 ##
@@ -213,13 +210,4 @@
     datatype: dword
   tags: autologon
 
-- name: windows | restart machine
-  win_reboot:
 
-- name: windows | wait for vagrant mount
-  win_stat:
-      path: "c:\\tmp\\vagrant-cache"
-  register: mount
-  until: mount.stat.exists
-  retries: 10
-  delay: 6
