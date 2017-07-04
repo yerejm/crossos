@@ -28,10 +28,10 @@
 
 - name: opengl | Extract LLVM source
   unarchive:
-    src: http://llvm.org/releases/3.7.1/llvm-3.7.1.src.tar.xz
+    src: "http://llvm.org/releases/{{ llvm_version }}/llvm-{{ llvm_version }}.src.tar.xz"
     dest: ~/llvmpipe
     copy: no
-    creates: ~/llvmpipe/llvm-3.7.1.src
+    creates: "~/llvmpipe/llvm-{{ llvm_version }}.src"
 
 - name: opengl | Create LLVM build area
   file:
@@ -40,7 +40,7 @@
     mode: 0755
 
 - name: opengl | Configure LLVM build
-  shell: ../llvm-3.7.1.src/configure --prefix=$HOME/llvm
+  shell: "../llvm-{{ llvm_version }}.src/configure --prefix=$HOME/llvm"
   args:
     chdir: ~/llvmpipe/llvm-build
     creates: ~/llvmpipe/llvm-build/Makefile
@@ -53,29 +53,38 @@
 
 - name: opengl | Install Mesa source
   unarchive:
-    src: https://mesa.freedesktop.org/archive/13.0.4/mesa-13.0.4.tar.xz
+    src: "https://mesa.freedesktop.org/archive/mesa-{{ mesa_version }}.tar.xz"
     dest: ~/llvmpipe
     copy: no
-    creates: ~/llvmpipe/mesa-13.0.4
+    creates: "~/llvmpipe/mesa-{{ mesa_version }}"
 
 # scons must be at most 2.4 for mesa to build
 - name: opengl | Build Mesa
   shell: LLVM=~/llvm scons build=release llvm=yes libgl-xlib
   args:
-    chdir: ~/llvmpipe/mesa-13.0.4
-    creates: ~/llvmpipe/mesa-13.0.4/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5
+    chdir: "~/llvmpipe/mesa-{{ mesa_version }}"
+    creates: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
 
-- name: opengl | Install Mesa library
-  shell: cp ~/llvmpipe/mesa-13.0.4/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5 /usr/local/lib/libGL.so.1.5
+- name: opengl | Install Mesa
+  shell: "cp libGL.so.1.5 /usr/local/lib/libGL.so.1.5"
   args:
-    creates: /usr/local/lib/libGL.so.1.5
+    chdir: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib"
+    creates: "/usr/local/libGL.so.1.5"
 
 - name: opengl | Link Mesa library
   file:
-    src: /usr/local/lib/libGL.so.1.5
+    src: "/usr/local/lib/libGL.so.1.5"
     path: "/usr/local/lib/{{ item }}"
     state: link
   with_items:
-    - libGL.so.1
     - libGL.so
+    - libGL.so.1
+
+- name: opengl | Override LD_LIBRARY_PATH
+  become: yes
+  become_user: "{{ buildbot_username }}"
+  lineinfile:
+    path: ~/.bashrc
+    regexp: '^export LD_LIBRARY_PATH=/usr/local/lib'
+    line: 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
 

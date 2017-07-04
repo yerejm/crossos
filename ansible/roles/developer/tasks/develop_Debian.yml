@@ -8,3 +8,11 @@
     editable: false
     state: present
 
+- name: develop | Override LD_LIBRARY_PATH
+  become: yes
+  become_user: vagrant
+  lineinfile:
+    path: ~/.bashrc
+    regexp: '^export LD_LIBRARY_PATH=/usr/local/lib'
+    line: 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
+
