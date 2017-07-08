@@ -13,6 +13,6 @@
   become_user: vagrant
   lineinfile:
     path: ~/.bashrc
-    regexp: '^export LD_LIBRARY_PATH=/usr/local/lib'
-    line: 'export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH'
+    regexp: '^export LD_LIBRARY_PATH=/usr/local/lib/mesa'
+    line: 'export LD_LIBRARY_PATH=/usr/local/lib/mesa:$LD_LIBRARY_PATH'
 
