@@ -86,11 +86,3 @@
     - libGL.so
     - libGL.so.1
 
-- name: opengl | Override LD_LIBRARY_PATH
-  become: yes
-  become_user: "{{ buildbot_username }}"
-  lineinfile:
-    path: ~/.bashrc
-    regexp: '^export LD_LIBRARY_PATH=/usr/local/lib/mesa'
-    line: 'export LD_LIBRARY_PATH=/usr/local/lib/mesa:$LD_LIBRARY_PATH'
-
