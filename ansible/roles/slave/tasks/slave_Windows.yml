@@ -141,7 +141,10 @@
   win_user:
     name: "{{ buildbot_username }}"
     password: "{{ buildbot_username }}"
-    password_never_expires: no
+    password_never_expires: yes
+    password_expired: no
+    account_locked: no
+    account_disabled: no
     state: present
   tags: buildbot
 
@@ -171,11 +174,11 @@
   tags: buildbot
 
 - name: windows | Allow buildbot service logon
-  win_shell: "c:\\tmp\\lsa_add_logon_as_svc.ps1 {{ buildbot_username }}"
+  win_shell: "c:\\tmp\\lsa_add_logon_as_svc.ps1 WINDOWS\\{{ buildbot_username }}"
   tags: buildbot
 
 - name: windows | Create buildbot service
-  win_shell: "c:\\python27\\python.exe c:\\python27\\scripts\\buildbot_service.py --user .\\{{ buildbot_username }} --password {{ buildbot_username }} --startup auto install"
+  win_shell: "c:\\python27\\python.exe c:\\python27\\scripts\\buildbot_service.py --user WINDOWS\\{{ buildbot_username }} --password {{ buildbot_username }} --startup auto install"
   notify: restart windows buildbot
   tags: buildbot
 
