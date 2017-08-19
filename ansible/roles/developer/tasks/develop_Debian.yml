@@ -7,3 +7,12 @@
     name: 'git+{{ ttt_repository }}'
     editable: false
     state: present
+
+- name: develop | MAKEFLAGS
+  become: yes
+  become_user: vagrant
+  lineinfile:
+    path: ~/.bashrc
+    regexp: '^export MAKEFLAGS=-j5'
+    line: 'export MAKEFLAGS=-j5'
+
