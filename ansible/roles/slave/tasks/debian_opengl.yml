@@ -66,21 +66,26 @@
     creates: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
 
 - name: opengl | Create Mesa Install Area
+  become: yes
+  become_user: vagrant
   file:
-    path: /usr/local/lib/mesa
+    path: ~/mesa
     state: directory
     mode: 0755
 
 - name: opengl | Install Mesa
-  shell: "cp libGL.so.1.5 /usr/local/lib/mesa/libGL.so.1.5"
-  args:
-    chdir: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib"
-    creates: "/usr/local/lib/mesa/libGL.so.1.5"
+  copy:
+    remote_src: true
+    src: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
+    dest: /home/vagrant/mesa/libGL.so.1.5
+    owner: vagrant
 
 - name: opengl | Link Mesa library
+  become: yes
+  become_user: vagrant
   file:
-    src: /usr/local/lib/mesa/libGL.so.1.5
-    path: "/usr/local/lib/mesa/{{ item }}"
+    src: ~/mesa/libGL.so.1.5
+    path: "~/mesa/{{ item }}"
     state: link
   with_items:
     - libGL.so
