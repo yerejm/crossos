@@ -34,6 +34,8 @@ def server(cfg)
     v.cpus = 4
     v.memory = 2048
     v.gui = false
+    v.customize ['modifyvm', :id, '--vram', 16]
+    v.customize ["modifyvm", :id, "--vrde", "off"]
   end
 end
 
@@ -48,6 +50,8 @@ def desktop(cfg)
     v.customize ["modifyvm", :id, "--rtcuseutc", "on"]
     v.customize ["modifyvm", :id, "--accelerate3d", "on"]
     v.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    v.customize ["modifyvm", :id, "--usb", "on"]
+    v.customize ["modifyvm", :id, "--vrde", "off"]
   end
 end
 
