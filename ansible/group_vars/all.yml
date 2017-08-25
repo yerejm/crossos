@@ -44,10 +44,6 @@ buildworker_passwords:
 #-----------------------------------------------------------------------
 ttt_repository: https://github.com/yerejm/ttt
 
-# llvm release required to buld mesa llvmpipe.
-# mesa does not yet work with 3.8
-llvm_version: 3.7.1
-
 # mesa release
 mesa_version: 17.1.7
 

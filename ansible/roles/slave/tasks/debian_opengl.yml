@@ -2,11 +2,7 @@
 ###
 ### OPENGL
 ###
-### Mesa llvmpipe OpenGL 3.3 software renderer
-###
-### Linux on virtualbox is limited to 2.1 at best, but debian installs the 3.0
-### llvmpipe software renderer which still isn't good enough.
-###
+### Mesa llvmpipe OpenGL software renderer
 ### Mesa requires llvm<=3.7, scons<=2.4
 ###
 - name: opengl | Install build dependecies
@@ -15,55 +11,26 @@
     state: present
   with_items:
     - scons
+    - llvm-dev
+    - zlib1g-dev
     - flex
     - bison
     - python-mako
     - pkg-config
 
-- name: opengl | Create build area
-  file:
-    path: ~/llvmpipe
-    state: directory
-    mode: 0755
-
-- name: opengl | Extract LLVM source
-  unarchive:
-    src: "http://llvm.org/releases/{{ llvm_version }}/llvm-{{ llvm_version }}.src.tar.xz"
-    dest: ~/llvmpipe
-    copy: no
-    creates: "~/llvmpipe/llvm-{{ llvm_version }}.src"
-
-- name: opengl | Create LLVM build area
-  file:
-    path: ~/llvmpipe/llvm-build
-    state: directory
-    mode: 0755
-
-- name: opengl | Configure LLVM build
-  shell: "../llvm-{{ llvm_version }}.src/configure --prefix=$HOME/llvm"
-  args:
-    chdir: ~/llvmpipe/llvm-build
-    creates: ~/llvmpipe/llvm-build/Makefile
-
-- name: opengl | Build LLVM
-  shell: make -j4 && make install
-  args:
-    chdir: ~/llvmpipe/llvm-build
-    creates: ~/llvm
-
-- name: opengl | Install Mesa source
+- name: opengl | Get Mesa source
   unarchive:
     src: "https://mesa.freedesktop.org/archive/mesa-{{ mesa_version }}.tar.xz"
-    dest: ~/llvmpipe
+    dest: ~/
     copy: no
-    creates: "~/llvmpipe/mesa-{{ mesa_version }}"
+    creates: "~/mesa-{{ mesa_version }}"
 
 # scons must be at most 2.4 for mesa to build
 - name: opengl | Build Mesa
-  shell: LLVM=~/llvm scons build=release llvm=yes libgl-xlib
+  shell: scons build=release llvm=yes libgl-xlib
   args:
-    chdir: "~/llvmpipe/mesa-{{ mesa_version }}"
-    creates: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
+    chdir: "~/mesa-{{ mesa_version }}"
+    creates: "~/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
 
 - name: opengl | Create Mesa Install Area
   become: yes
@@ -76,7 +43,7 @@
 - name: opengl | Install Mesa
   copy:
     remote_src: true
-    src: "~/llvmpipe/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
+    src: "~/mesa-{{ mesa_version }}/build/linux-x86_64/gallium/targets/libgl-xlib/libGL.so.1.5"
     dest: /home/vagrant/mesa/libGL.so.1.5
     owner: vagrant
 
