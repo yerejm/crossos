@@ -25,20 +25,21 @@
   apt:
     update_cache: yes
 
-- name: Upgrade all safe packages
-  apt:
-    upgrade: safe
-
 - name: Install base packages
   apt:
     pkg: "{{ item }}"
     state: present
   with_items:
+    - aptitude
     - apt-transport-https
     - sudo
     - vim
     - git
     - ntp
+
+- name: Upgrade all safe packages
+  apt:
+    upgrade: safe
 
 - name: Install unattended upgrades
   apt:

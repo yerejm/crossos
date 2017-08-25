@@ -13,5 +13,5 @@ ntp_servers:
 # default apt mirrors for debian and ubuntu
 debian_mirror: http://http.debian.net/debian
 debian_security_mirror: http://security.debian.org/
-debian_release: jessie
+debian_release: stretch
 
