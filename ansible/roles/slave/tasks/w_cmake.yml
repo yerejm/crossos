@@ -6,7 +6,7 @@
 
 - name: cmake | Install
   win_msi:
-    path: "{{ download_location }}\\{{ file }}"
+    path: "{{ download_location }}\\{{ cmake_file }}"
     wait: True
     state: present
   when: not app.stat.exists

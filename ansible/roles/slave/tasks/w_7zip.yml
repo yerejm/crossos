@@ -6,7 +6,7 @@
 
 - name: 7zip | Install
   win_msi:
-    path: "{{ download_location }}\\{{ file }}"
+    path: "{{ download_location }}\\{{ zip_file }}"
     wait: True
     state: present
   when: not app.stat.exists

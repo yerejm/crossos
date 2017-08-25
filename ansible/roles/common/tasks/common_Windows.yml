@@ -12,3 +12,72 @@
   when: ansible_hostname.lower() in groups['windows']
   tags: [common,hosts]
 
+##
+## Make Windows tolerable
+##
+- name: Checking common setup
+  win_stat:
+    path: .debloated
+  register: debloated
+
+# Debloat Windows - remove unnecessary software & stops unnecessary and excessive network traffic
+
+- name: Extract debloater
+  win_unzip:
+    src: "{{ download_location }}\\Debloat-Windows-10-master.zip"
+    dest: "{{ download_location }}"
+    creates: "{{ download_location }}\\scripts"
+  when: not debloated.stat.exists
+
+- name: Execute debloat scripts; part 1
+  win_shell: "{{ download_location }}/Debloat-Windows-10-master/scripts/disable-windows-defender.ps1"
+  when: not debloated.stat.exists
+
+- name: restart machine
+  win_reboot:
+  when: not debloated.stat.exists
+
+- name: Execute debloat scripts; part 2
+  win_shell: "{{ download_location }}/Debloat-Windows-10-master/scripts/{{ item }}"
+  with_items:
+    - disable-windows-defender.ps1
+    - block-telemetry.ps1
+    - disable-services.ps1
+    - fix-privacy-settings.ps1
+    - optimize-user-interface.ps1
+    - optimize-windows-update.ps1
+    - remove-default-apps.ps1
+    - remove-onedrive.ps1
+  when: not debloated.stat.exists
+
+- name: debloat | Delete install files
+  win_file:
+    path: "{{ download_location }}\\{{ item }}"
+    state: absent
+  with_items:
+    - Debloat-Windows-10-master
+
+# Bring back the classic start menu
+- name: classic shell | Install
+  win_package:
+    name: Classic Shell
+    path: "{{ download_location }}\\{{ classicshell_file }}"
+    product_id: "{{ classicshell_product_id }}"
+    arguments: "/qn ADDLOCAL=ClassicStartMenu"
+  when: not debloated.stat.exists
+
+# Shutup Windows 10 - privacy settings (reboot later; some setting specific to user)
+- name: Run OOSU10
+  win_shell: "{{ download_location }}\\OOSU10.exe {{ download_location }}\\ooshutup10.cfg /quiet"
+  when: not debloated.stat.exists
+
+- name: Removal complete
+  win_file:
+    name: .debloated
+    state: touch
+  when: not debloated.stat.exists
+
+- name: restart machine
+  win_reboot:
+  when: not debloated.stat.exists
+

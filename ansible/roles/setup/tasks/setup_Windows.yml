@@ -1,0 +1,24 @@
+---
+- name: Wait for WinRM
+  local_action: wait_for port="{{ ansible_ssh_port }}" host="{{ inventory_hostname }}"
+
+- name: windows | Download install files
+  win_copy:
+    src: "{{ item }}"
+    dest: "{{ download_location }}\\{{ item }}"
+  with_items:
+    - Debloat-Windows-10-master.zip
+    - OOSU10.exe
+    - ooshutup10.cfg
+    - "{{ classicshell_file }}"
+    - "{{ python_file }}"
+    - "{{ pywin32_file }}"
+    - "{{ git_file }}"
+    - "{{ cmake_file }}"
+    - "{{ zip_file }}"
+    - "{{ vs_file }}"
+    - "{{ vcp27_file }}"
+    - "{{ wdk_file }}"
+    - "{{ mesa_file }}"
+    - AddOGLW8and10x64.reg
+

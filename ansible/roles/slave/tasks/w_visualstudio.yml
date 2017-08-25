@@ -1,18 +1,15 @@
 ---
 - name: visual studio | Installed?
   win_stat:
-    path: "C:\\Program Files (x86)\\msbuild\\{{ vs_version }}\\bin"
+    path: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin'
   register: app
 
-- name: visual studio | Need to mount?
-  win_stat:
-    path: "d:\\vs_community.exe"
-  register: mount
+- name: visual studio | Extract VS2017
+  win_unzip:
+    src: "{{ download_location }}\\{{ vs_file }}"
+    dest: "{{ download_location }}"
+    creates: "{{ download_location }}\\vs2017layout\\vs_Community.exe"
   when: not app.stat.exists
-
-- name: visual studio | Mount ISO
-  win_shell: "mount-diskimage {{ download_location }}\\{{ file }}"
-  when: not app.stat.exists and not mount.stat.exists
 
 - set_fact:
     vsinstall: false
@@ -20,23 +17,21 @@
 - name: visual studio | Install
   win_package:
     name: Visual Studio
-    path: "d:\\vs_community.exe"
-    product_id: "{5c4dd346-d2b9-3b7b-9320-a90049d5e48b}"
-    arguments: "/silent /norestart /norefresh /InstallSelectableItems NativeLanguageSupport_VC /l c:\\tmp\\vs\\log.txt"
+    path: "{{ download_location }}\\vs2017layout\\vs_Community.exe"
+    product_id: "{{ vs_product_id }}"
+    arguments: "--add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended --norestart --quiet --wait --noWeb --noUpdateInstaller"
     expected_return_code: [0,3010]
   register: vsinstall
   when: not app.stat.exists
 
+- name: visual studio | Delete install files
+  win_file:
+    path: "{{ download_location }}\\{{ item }}"
+    state: absent
+  with_items:
+    - "vs2017layout"
+
 - debug: var=vsinstall verbosity=2
-
-- name: visual studio | Need to dismount?
-  win_stat:
-    path: "d:\\vs_community.exe"
-  register: mount
-
-- name: visual studio | Dismount ISO
-  win_shell: "dismount-diskimage {{ download_location }}\\{{ file }}"
-  when: mount.stat.exists
 
 - name: restart machine
   win_reboot:
@@ -44,7 +39,7 @@
 
 - name: wait for vagrant mount
   win_stat:
-      path: "c:\\tmp\\vagrant-cache"
+      path: "{{ cache_location }}"
   register: mount
   until: mount.stat.exists
   retries: 10

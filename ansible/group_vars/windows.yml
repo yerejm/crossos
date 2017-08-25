@@ -16,10 +16,11 @@ etc_hosts_file: 'c:\windows\system32\drivers\etc\hosts'
 
 # Git for windows
 git_file: Git-2.14.1-64-bit.exe
+git_product_id: Git_is1
 
-# Visual Studio ISO
-vs_file: vs2015.3.com_enu.iso
-vs_version: 14.0
+# Visual Studio
+vs_file: vs2017layout.zip
+vs_product_id: "{6F320B93-EE3C-4826-85E0-ADF79F8D4C61}"
 
 # 7zip for windows
 zip_file: 7z1604-x64.msi
@@ -32,10 +33,20 @@ pywin32_file: pywin32-221.win-amd64-py2.7.exe
 
 # Windows Development Kit
 wdk_file: WDK.zip
+wdk_product_id: "{aba88724-37eb-4f03-b83b-45199c5a7cf5}"
 
 # cmake
 cmake_file: cmake-3.9.1-win64-x64.msi
 
 # visual c++ for python 2.7
 vcp27_file: VCForPython27.msi
+
+# pre-built mesa binaries
+# https://github.com/pal1000/mesa-dist-win/releases
+mesa_file: mesa-17.1.7.401-1-sfx.exe
+
+# classic shell
+# http://www.classicshell.net/
+classicshell_file: ClassicShellSetup_4_3_1.exe
+classicshell_product_id: "{CABCE573-0A86-42FA-A52A-C7EA61D5BE08}"
 

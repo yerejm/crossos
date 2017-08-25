@@ -1,10 +1,10 @@
 ---
 - name: pywin32 | Installed?
   win_stat:
-    path: "C:\\python27\\scripts\\pywin32_postinstall.py"
+    path: C:\python27\scripts\pywin32_postinstall.py
   register: app
 
 - name: pywin32 | Install
-  win_shell: "c:\\python27\\scripts\\easy_install {{ download_location }}\\{{ file }}"
+  win_shell: "c:\\python27\\scripts\\easy_install {{ download_location }}\\{{ pywin32_file }}"
   when: not app.stat.exists
 

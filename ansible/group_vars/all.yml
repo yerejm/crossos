@@ -49,4 +49,5 @@ ttt_repository: https://github.com/yerejm/ttt
 llvm_version: 3.7.1
 
 # mesa release
-mesa_version: 17.1.4
+mesa_version: 17.1.7
+

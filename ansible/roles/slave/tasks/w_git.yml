@@ -7,7 +7,7 @@
 - name: git | Install
   win_package:
     name: git
-    path: "{{ download_location }}\\{{ file }}"
-    product_id: "Git_is1"
+    path: "{{ download_location }}\\{{ git_file }}"
+    product_id: "{{ git_product_id }}"
     arguments: "/SILENT"
   when: not app.stat.exists

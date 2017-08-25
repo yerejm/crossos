@@ -17,7 +17,7 @@
 - name: Update path
   win_environment:
     name: Path
-    value: "{{ (paths + [path]) | join(';') }}"
+    value: "{{ ([path] + paths) | join(';') }}"
     state: present
     level: "{{ level }}"
   when: a.stat.exists and path not in paths

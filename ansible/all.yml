@@ -3,6 +3,7 @@
   strategy: free
   user: root
   roles:
+    - setup
     - common
     - master
     - slave

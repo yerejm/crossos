@@ -22,23 +22,6 @@
 ##
 ## BUILD DEPS
 ##
-- name: windows | Download install files
-  win_get_url:
-    url: "file://{{ cache_location }}\\{{ item }}"
-    dest: "{{ download_location }}\\{{ item }}"
-  with_items:
-    - "{{ python_file }}"
-    - "{{ pywin32_file }}"
-    - "{{ git_file }}"
-    - "{{ cmake_file }}"
-    - "{{ zip_file }}"
-    - "{{ vs_file }}"
-    - "{{ vcp27_file }}"
-    - "{{ wdk_file }}"
-    - "llvm-{{ llvm_version }}.src.tar.xz"
-    - "mesa-{{ mesa_version }}.tar.xz"
-    - "win_flex_bison-latest.zip"
-    - AddOGLW8and10x64.reg
 
 # https://www.virtualbox.org/ticket/12048
 # No OpenGL Support for Windows 8
@@ -47,49 +30,33 @@
 
 # dependency: buildbot
 - include: w_python.yml
-  vars:
-    file: "{{ python_file }}"
   tags: [python,buildbot]
 
 # dependency: buildbot
 - include: w_pywin32.yml
-  vars:
-    file: "{{ pywin32_file }}"
   tags: [pywin32,buildbot]
 
 # dependency: repository
 - include: w_git.yml
-  vars:
-    file: "{{ git_file }}"
   tags: git
 
 # dependency: compiler
 - include: w_cmake.yml
-  vars:
-    file: "{{ cmake_file }}"
   tags: cmake
 
 - include: w_7zip.yml
-  vars:
-    file: "{{ zip_file }}"
   tags: 7zip
 
 # dependency: compiler
 - include: w_visualstudio.yml
-  vars:
-    file: "{{ vs_file }}"
   tags: visualstudio
 
 # dependency: compiling extensions on python 2.7
 - include: w_vcp27.yml
-  vars:
-    file: "{{ vcp27_file }}"
-  tags: [python]
+  tags: python
 
 # dependency: symstore
 - include: w_wdk.yml
-  vars:
-    file: "{{ wdk_file }}"
   tags: wdk
 
 - include: win_path.yml
@@ -102,29 +69,11 @@
     - 'C:\Program Files\Git\bin'
     - 'C:\Program Files\CMake\bin'
     - 'C:\Program Files\7-Zip'
-    - 'C:\Program Files (x86)\MSBuild\{{ vs_version }}\Bin'
+    - 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin'
 
 # opengl software renderer
 - include: w_opengl.yml
   tags: opengl
-
-- name: windows | Delete install files
-  win_file:
-    path: "{{ download_location }}\\{{ item }}"
-    state: absent
-  with_items:
-    - "{{ python_file }}"
-    - "{{ pywin32_file }}"
-    - "{{ git_file }}"
-    - "{{ cmake_file }}"
-    - "{{ zip_file }}"
-    - "{{ vs_file }}"
-    - "{{ vcp27_file }}"
-    - "{{ wdk_file }}"
-    - "llvm-{{ llvm_version }}.src.tar.xz"
-    - "mesa-{{ mesa_version }}.tar.xz"
-    - "win_flex_bison-latest.zip"
-    - AddOGLW8and10x64.reg
 
 ##
 ## PIP DEPENDENCIES
@@ -205,12 +154,24 @@
 #
 # Finalisation
 #
-- name: windows | Enable autologon
-  win_regedit:
-    key: HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
-    data: 1
-    value: AutoAdminLogon
-    datatype: dword
-  tags: autologon
-
+- name: windows | Delete install files
+  win_file:
+    path: "{{ download_location }}\\{{ item }}"
+    state: absent
+  with_items:
+    - Debloat-Windows-10-master.zip
+    - OOSU10.exe
+    - ooshutup10.cfg
+    - "{{ classicshell_file }}"
+    - "{{ python_file }}"
+    - "{{ pywin32_file }}"
+    - "{{ git_file }}"
+    - "{{ cmake_file }}"
+    - "{{ zip_file }}"
+    - "{{ vs_file }}"
+    - "{{ vcp27_file }}"
+    - "{{ wdk_file }}"
+    - "{{ mesa_file }}"
+    - AddOGLW8and10x64.reg
+    - lsa_add_logon_as_svc.ps1
 
