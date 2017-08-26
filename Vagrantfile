@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby tabstop=2 expandtab shiftwidth=2 softtabstop=2 :
+require 'etc'
+
 SERVERS = {
   :master => {
     :ip => '172.31.70.40',
@@ -31,7 +33,7 @@ end
 def server(cfg)
   cfg.cache.scope = :machine if Vagrant.has_plugin? "vagrant-cachier"
   cfg.vm.provider "virtualbox" do |v|
-    v.cpus = 4
+    v.cpus = Etc.nprocessors / 2
     v.memory = 2048
     v.gui = false
     v.customize ['modifyvm', :id, '--vram', 16]
@@ -42,7 +44,7 @@ end
 def desktop(cfg)
   cfg.cache.scope = :machine if Vagrant.has_plugin? "vagrant-cachier"
   cfg.vm.provider "virtualbox" do |v|
-    v.cpus = 4
+    v.cpus = Etc.nprocessors / 2
     v.memory = 4096
     v.customize ['modifyvm', :id, '--vram', 256]
     v.customize ["setextradata", :id, "CustomVideoMode1", "1024x768x32"]
