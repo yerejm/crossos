@@ -1,2 +1,2 @@
 secrets.yml
-ansible/roles/setup/files/*.*
+ansible/roles/setup/files

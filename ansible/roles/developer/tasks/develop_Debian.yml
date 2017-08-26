@@ -16,3 +16,19 @@
     regexp: '^export MAKEFLAGS=-j5'
     line: 'export MAKEFLAGS=-j5'
 
+- name: develop | MESA_GL_VERSION_OVERRIDE
+  become: yes
+  become_user: vagrant
+  lineinfile:
+    path: ~/.bashrc
+    regexp: '^export MESA_GL_VERSION_OVERRIDE=4.3'
+    line: 'export MESA_GL_VERSION_OVERRIDE=4.3'
+
+- name: develop | MESA_GLSL_VERSION_OVERRIDE
+  become: yes
+  become_user: vagrant
+  lineinfile:
+    path: ~/.bashrc
+    regexp: '^export MESA_GLSL_VERSION_OVERRIDE=430'
+    line: 'export MESA_GLSL_VERSION_OVERRIDE=430'
+
