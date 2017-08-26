@@ -14,6 +14,9 @@
 - set_fact:
     vsinstall: false
 
+# To update the layout:
+# vs_community.exe --layout c:\vs2017layout --add Microsoft.VisualStudio.Workload.NativeDesktop;includeRecommended --lang en-US
+# Do not use the vs_community in the layout - download from https://aka.ms/vs/15/release/vs_community.exe
 - name: visual studio | Install
   win_package:
     name: Visual Studio
