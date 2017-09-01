@@ -13,8 +13,8 @@
   become_user: vagrant
   lineinfile:
     path: ~/.bashrc
-    regexp: '^export MAKEFLAGS=-j5'
-    line: 'export MAKEFLAGS=-j5'
+    regexp: '^export MAKEFLAGS=-j3'
+    line: 'export MAKEFLAGS=-j3'
 
 - name: develop | MESA_GL_VERSION_OVERRIDE
   become: yes
