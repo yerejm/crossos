@@ -29,6 +29,12 @@
     creates: "{{ download_location }}\\scripts"
   when: not debloated.stat.exists
 
+- name: Execute utility scripts
+  win_shell: "{{ download_location }}/Debloat-Windows-10-master/utils/{{ item }}"
+  with_items:
+    - disable-scheduled-tasks.ps1
+  when: not debloated.stat.exists
+
 - name: Execute debloat scripts; part 1
   win_shell: "{{ download_location }}/Debloat-Windows-10-master/scripts/disable-windows-defender.ps1"
   when: not debloated.stat.exists
