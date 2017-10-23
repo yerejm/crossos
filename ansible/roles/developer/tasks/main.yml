@@ -1,4 +1,4 @@
 ---
-- include: "develop_{{ ansible_os_family }}.yml"
+- include_tasks: "develop_{{ ansible_os_family }}.yml"
   tags: [develop]
   when: ansible_hostname.lower() in groups['buildslaves']

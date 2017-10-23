@@ -29,37 +29,37 @@
   win_shell: "reg import {{ download_location }}\\AddOGLW8and10x64.reg"
 
 # dependency: buildbot
-- include: w_python.yml
+- import_tasks: w_python.yml
   tags: [python,buildbot]
 
 # dependency: buildbot
-- include: w_pywin32.yml
+- import_tasks: w_pywin32.yml
   tags: [pywin32,buildbot]
 
 # dependency: repository
-- include: w_git.yml
+- import_tasks: w_git.yml
   tags: git
 
 # dependency: compiler
-- include: w_cmake.yml
+- import_tasks: w_cmake.yml
   tags: cmake
 
-- include: w_7zip.yml
+- import_tasks: w_7zip.yml
   tags: 7zip
 
 # dependency: compiler
-- include: w_visualstudio.yml
+- import_tasks: w_visualstudio.yml
   tags: visualstudio
 
 # dependency: compiling extensions on python 2.7
-- include: w_vcp27.yml
+- import_tasks: w_vcp27.yml
   tags: python
 
 # dependency: symstore
-- include: w_wdk.yml
+- import_tasks: w_wdk.yml
   tags: wdk
 
-- include: win_path.yml
+- import_tasks: win_path.yml
   vars:
     path: "{{ item }}"
     level: machine
@@ -72,7 +72,7 @@
     - 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin'
 
 # opengl software renderer
-- include: w_opengl.yml
+- import_tasks: w_opengl.yml
   tags: opengl
 
 ##

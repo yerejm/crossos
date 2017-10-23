@@ -61,7 +61,7 @@
 #
 # OPENGL
 #
-- include: debian_opengl.yml
+- import_tasks: debian_opengl.yml
   tags: opengl
 
 ##

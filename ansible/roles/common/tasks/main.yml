@@ -1,3 +1,3 @@
 ---
-- include: "common_{{ ansible_os_family }}.yml"
+- include_tasks: "common_{{ ansible_os_family }}.yml"
   tags: [common]

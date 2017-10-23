@@ -1,4 +1,4 @@
 ---
-- include: "setup_{{ ansible_os_family }}.yml"
+- include_tasks: "setup_{{ ansible_os_family }}.yml"
   tags: [setup]
   when: ansible_os_family == 'Windows'

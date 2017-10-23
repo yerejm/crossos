@@ -10,11 +10,11 @@
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
     regexp: "^github\\.com"
 
-- include: ircd.yml
+- import_tasks: ircd.yml
   tags: ircd
-- include: nginx.yml
+- import_tasks: nginx.yml
   tags: nginx
-- include: buildmaster.yml
+- import_tasks: buildmaster.yml
   tags: buildbot
 
 # Force handlers so the web sites are accessible
